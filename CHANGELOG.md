@@ -3,10 +3,10 @@ Simple QrCode
 
 ##Change Log
 
-#### 4.3.0 (unreleased)
+#### 4.3.0 (2026-11-13)
 * First release of the maintained fork, published as `jamalofski/simple-qrcode`. It declares `replace` for `simplesoftwareio/simple-qrcode`: same namespace, same facade, same API.
 * Requires `bacon/bacon-qr-code` ^3, so it installs next to `laravel/fortify` and the official Laravel starter kits.
-* Requires PHP 8.2 or later. Supports PHP 8.2 to 8.5 and Laravel 11 to 13.
+* Requires PHP 8.2 or later. Tested on PHP 8.2 to 8.5 and Laravel 11 to 13.
 * `generate()` declares `$filename` as nullable (PHP 8.4 deprecation).
 * `png` works without `imagick`: it is rendered with GD (bacon `GDLibRenderer`) when `imagick` is missing. Options GD cannot draw (dot and round styles, circle eyes, gradients) throw a clear `RuntimeException` instead of failing in `imagick`.
 * Merged logos keep a transparent background transparent (it turned opaque black).
