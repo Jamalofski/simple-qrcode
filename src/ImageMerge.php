@@ -105,6 +105,19 @@ class ImageMerge
      */
     public function merge($percentage)
     {
+        $this->mergeImage($percentage);
+
+        return $this->createImage();
+    }
+
+    /**
+     * Merges the image like merge(), and returns the GD image instead of encoding it as png.
+     *
+     * @param float $percentage The percentage of size relative to the entire QR of the merged image
+     * @return \GdImage
+     */
+    public function mergeImage($percentage)
+    {
         $this->setProperties($percentage);
 
         $img = imagecreatetruecolor($this->sourceImage->getWidth(), $this->sourceImage->getHeight());
@@ -142,7 +155,7 @@ class ImageMerge
 
         $this->sourceImage->setImageResource($img);
 
-        return $this->createImage();
+        return $img;
     }
 
     /**

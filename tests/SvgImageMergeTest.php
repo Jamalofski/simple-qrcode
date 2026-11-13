@@ -44,6 +44,14 @@ class SvgImageMergeTest extends TestCase
         $this->assertSame(['60', '120'], [$image['width'], $image['height']]);
     }
 
+    public function test_an_svg_logo_with_a_byte_order_mark_is_recognized()
+    {
+        $logo = "\xEF\xBB\xBF".'<?xml version="1.0" encoding="UTF-8"?>'."\n".'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"/>';
+        $image = $this->image((new SvgImageMerge(self::SVG, $logo))->merge(.2));
+
+        $this->assertStringStartsWith('data:image/svg+xml;base64,', $image['xlink:href']);
+    }
+
     public function test_an_unknown_image_throws_an_exception()
     {
         $this->expectException(InvalidArgumentException::class);

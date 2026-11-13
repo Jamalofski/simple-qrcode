@@ -97,7 +97,7 @@ class SvgImageMerge
      */
     protected function describeImage(): array
     {
-        if (preg_match('/^\s*(?:<\?xml[^>]*>\s*)?(?:<!--.*?-->\s*)*(?:<!DOCTYPE[^>]*>\s*)?<svg[\s>]/is', $this->image)) {
+        if (preg_match('/^(?:\xEF\xBB\xBF)?\s*(?:<\?xml[^>]*>\s*)?(?:<!--.*?-->\s*)*(?:<!DOCTYPE[^>]*>\s*)?<svg[\s>]/is', $this->image)) {
             $root = $this->rootTag($this->image);
             [$width, $height] = $this->viewBoxSize($root) ?? [$this->attribute($root, 'width'), $this->attribute($root, 'height')];
 

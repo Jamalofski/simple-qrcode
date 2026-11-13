@@ -4,6 +4,8 @@ use BaconQrCode\Renderer\GDLibRenderer;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use SimpleSoftwareIO\QrCode\Generator;
+use SimpleSoftwareIO\QrCode\Image;
+use SimpleSoftwareIO\QrCode\ImageMerge;
 use Zxing\QrReader;
 
 /**
@@ -219,6 +221,35 @@ class PngTest extends TestCase
         $this->assertGreaterThan(strlen($smallest), strlen($none));
         $this->assertSame('compression', $this->decode($none));
         $this->assertSame($this->pixel($smallest, 150, 150), $this->pixel($none, 150, 150));
+    }
+
+    #[DataProvider('renderers')]
+    public function test_compression_applies_with_a_merged_logo(string $class)
+    {
+        $generator = fn () => $this->generator($class)
+            ->format('png')
+            ->size(300)
+            ->margin(1)
+            ->errorCorrection('H')
+            ->merge(__DIR__.'/Images/simplesoftware-icon-grey-blue.png', .2, true);
+        $usual = (string) $generator()->generate('merged');
+        $none = (string) $generator()->compression(0)->generate('merged');
+
+        $this->assertGreaterThan(strlen($usual) * 10, strlen($none));
+        $this->assertSame('merged', $this->decode($none));
+        $this->assertSame($this->pixel($usual, 150, 150), $this->pixel($none, 150, 150));
+    }
+
+    public function test_a_merged_logo_without_compression_gives_the_same_png_as_before()
+    {
+        $logo = __DIR__.'/Images/simplesoftware-icon-grey-blue.png';
+        $generator = (new GeneratorWithoutImagick)->format('png')->size(300)->margin(1)->errorCorrection('H');
+        $qrCode = (string) (clone $generator)->generate('same as 4.3');
+
+        // What 4.3 did: ImageMerge::merge() over the renderer's png.
+        $before = (new ImageMerge(new Image($qrCode), new Image(file_get_contents($logo))))->merge(.2);
+
+        $this->assertSame($before, (string) (clone $generator)->merge($logo, .2, true)->generate('same as 4.3'));
     }
 
     public function test_webp_without_imagick_has_the_limits_of_gd()

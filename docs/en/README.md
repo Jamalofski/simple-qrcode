@@ -107,7 +107,7 @@ A `webp` image is lossless by default, and usually smaller than the same `png`. 
 	QrCode::format('webp')->generate('Make me into a QrCode!'); // Lossless
 	QrCode::format('webp')->quality(80)->generate('Make me into a QrCode!'); // Lossy
 
-A `png` image is always lossless. `compression` sets its zlib level, from 0 (no compression, fastest) to 9 (smallest file, the default): it changes the size of the file and the time to write it, never the image.
+A `png` image is always lossless. `compression` sets its zlib level, from 0 (fastest, largest file) to 9 (smallest file), merged logo included: it changes the size of the file and the time to write it, never the image.
 
 	QrCode::format('png')->compression(1)->generate('Make me into a QrCode!');
 

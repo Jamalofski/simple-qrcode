@@ -141,7 +141,7 @@ class Generator
     protected $quality = null;
 
     /**
-     * The zlib compression level of a png image, from 0 to 9. Null means 9.
+     * The zlib compression level of a png image, from 0 to 9. Null keeps the usual level.
      *
      * @var int|null
      */
@@ -230,17 +230,12 @@ class Generator
 
         $qrCode = $writer->writeString($text, $this->encoding, $this->errorCorrection);
 
-        if ($this->imageMerge !== null && in_array($this->format, ['png', 'webp'])) {
-            $merger = new ImageMerge(new Image($qrCode), new Image($this->imageMerge));
-            $qrCode = $merger->merge($this->imagePercentage);
+        if ($this->rendersIntermediatePng()) {
+            $qrCode = $this->finishRasterImage($qrCode);
         }
 
         if ($this->imageMerge !== null && $this->format === 'svg') {
             $qrCode = (new SvgImageMerge($qrCode, $this->imageMerge))->merge($this->imagePercentage);
-        }
-
-        if ($this->format === 'webp') {
-            $qrCode = $this->convertToWebp($qrCode);
         }
 
         if ($filename) {
@@ -520,10 +515,10 @@ class Generator
     }
 
     /**
-     * Sets the zlib compression level of a png image. Png is lossless: the level
-     * only trades the file size against the time to write it. The default is 9.
+     * Sets the zlib compression level of a png image, merged logo included. Png is
+     * lossless: the level only trades the file size against the time to write it.
      *
-     * @param int $level from 0 (none, fastest) to 9 (smallest file)
+     * @param int $level from 0 (fastest, largest file) to 9 (smallest file)
      * @return Generator
      * @throws InvalidArgumentException
      */
@@ -692,7 +687,7 @@ class Generator
             );
         }
 
-        return new GDLibRenderer($this->pixels, $this->margin, 'png', $this->compression ?? 9, $this->getFill());
+        return new GDLibRenderer($this->pixels, $this->margin, 'png', $this->pngLevel(9, 1), $this->getFill());
     }
 
     /**
@@ -714,7 +709,7 @@ class Generator
     {
         if (in_array($this->format, ['png', 'webp'])) {
             // ImageMagick reads the png "quality" as the zlib level (tens) and the filter (units).
-            return new ImagickImageBackEnd('png', $this->compression === null ? 100 : $this->compression * 10);
+            return new ImagickImageBackEnd('png', $this->pngLevel(100, 10));
         }
 
         if ($this->format === 'eps') {
@@ -821,19 +816,58 @@ class Generator
     }
 
     /**
-     * Converts a png image to webp with GD: lossless, or lossy with quality().
+     * Whether the renderer's png is only an intermediate image, decoded by GD to merge
+     * a logo or to write a webp.
+     *
+     * @return bool
+     */
+    protected function rendersIntermediatePng(): bool
+    {
+        return $this->format === 'webp' || ($this->format === 'png' && $this->imageMerge !== null);
+    }
+
+    /**
+     * The compression the renderer applies to its png, in the renderer's own scale.
+     * An intermediate png is decoded right away: it is written as fast as possible.
+     *
+     * @param int $usual The renderer's usual value
+     * @param int $perLevel The renderer's value for one zlib level
+     * @return int
+     */
+    protected function pngLevel(int $usual, int $perLevel): int
+    {
+        if ($this->rendersIntermediatePng()) {
+            return $perLevel;
+        }
+
+        return $this->compression === null ? $usual : $this->compression * $perLevel;
+    }
+
+    /**
+     * Merges the logo and writes the final png or webp from the renderer's png.
      *
      * @param string $png
      * @return string
-     * @throws RuntimeException when GD has no WebP support
+     * @throws RuntimeException when webp is requested and GD has no WebP support
      */
-    protected function convertToWebp(string $png): string
+    protected function finishRasterImage(string $png): string
     {
-        if (! function_exists('imagewebp')) {
+        if ($this->format === 'webp' && ! function_exists('imagewebp')) {
             throw new RuntimeException('The webp format needs the GD extension with WebP support.');
         }
 
-        $image = imagecreatefromstring($png);
+        $image = $this->imageMerge === null
+            ? imagecreatefromstring($png)
+            : (new ImageMerge(new Image($png), new Image($this->imageMerge)))->mergeImage($this->imagePercentage);
+
+        ob_start();
+
+        if ($this->format === 'png') {
+            // Without compression(), the level ImageMerge always used.
+            imagepng($image, null, $this->compression ?? -1);
+
+            return ob_get_clean();
+        }
 
         if (! imageistruecolor($image)) {
             imagepalettetotruecolor($image);
@@ -841,8 +875,6 @@ class Generator
 
         imagealphablending($image, false);
         imagesavealpha($image, true);
-
-        ob_start();
         imagewebp($image, null, $this->quality ?? (defined('IMG_WEBP_LOSSLESS') ? IMG_WEBP_LOSSLESS : 101));
 
         return ob_get_clean();
