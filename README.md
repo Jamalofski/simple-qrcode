@@ -18,7 +18,9 @@ composer require jamalofski/simple-qrcode
 
 Laravel discovers the service provider and the `QrCode` alias automatically.
 
-`png` images are rendered with `imagick` when it is installed, and with GD otherwise. GD draws square modules and square eyes only, without gradient: `style('dot')`, `style('round')`, `eye('circle')` and `gradient()` need `imagick` in `png`, and throw an exception without it. `svg` and `eps` support every option.
+`png` and `webp` images are rendered with `imagick` when it is installed, and with GD otherwise. GD draws square modules and square eyes only, without gradient: `style('dot')`, `style('round')`, eye styles other than `square` and `gradient()` need `imagick` in `png` and `webp`, and throw an exception without it. `svg` and `eps` support every option.
+
+Since 4.4: `webp` output, hex colors, rounded and pointy eyes with separate external and internal styles, logos merged in `svg`, the png compression level, and the EPC QR code of SEPA credit transfers. See the [CHANGELOG](CHANGELOG.md).
 
 ## Migrating from simplesoftwareio/simple-qrcode
 

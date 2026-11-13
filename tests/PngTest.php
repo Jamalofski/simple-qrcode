@@ -122,6 +122,9 @@ class PngTest extends TestCase
             'dot style' => [fn (Generator $g) => $g->style('dot'), "style('dot')"],
             'round style' => [fn (Generator $g) => $g->style('round'), "style('round')"],
             'circle eye' => [fn (Generator $g) => $g->eye('circle'), "eye('circle')"],
+            'rounded eye' => [fn (Generator $g) => $g->eye('rounded'), "eye('rounded')"],
+            'circle external eye' => [fn (Generator $g) => $g->externalEye('circle'), "externalEye('circle')"],
+            'pointy internal eye' => [fn (Generator $g) => $g->internalEye('pointy'), "internalEye('pointy')"],
             'gradient' => [fn (Generator $g) => $g->gradient(0, 0, 0, 255, 0, 0, 'vertical'), 'gradient()'],
         ];
     }
@@ -153,6 +156,11 @@ class PngTest extends TestCase
             'dot style, circle eyes' => [fn (Generator $g) => $g->style('dot')->eye('circle')],
             // Upstream #290 was about eps; png goes through another backend.
             'round style' => [fn (Generator $g) => $g->style('round', 0.9)],
+            'rounded eyes' => [fn (Generator $g) => $g->eye('rounded')],
+            'pointy eyes' => [fn (Generator $g) => $g->eye('pointy')],
+            'round external eye, square internal eye' => [fn (Generator $g) => $g->externalEye('circle')->internalEye('square')],
+            'rounded external eye, circle internal eye' => [fn (Generator $g) => $g->externalEye('rounded')->internalEye('circle')],
+            'webp from imagick' => [fn (Generator $g) => $g->format('webp')->eye('rounded')],
         ];
     }
 
@@ -162,5 +170,62 @@ class PngTest extends TestCase
         $generator = $option($this->generator(Generator::class)->format('png')->size(300)->margin(1));
 
         $this->assertSame('imagick only', $this->decode((string) $generator->generate('imagick only')));
+    }
+
+    #[DataProvider('renderers')]
+    public function test_it_generates_a_lossless_webp_that_decodes(string $class)
+    {
+        $webp = (string) $this->generator($class)->format('webp')->size(200)->margin(1)->generate('https://example.com/webp');
+
+        $this->assertSame('RIFF', substr($webp, 0, 4));
+        $this->assertSame('WEBPVP8L', substr($webp, 8, 8), 'Without quality(), webp is lossless (VP8L).');
+        $this->assertSame([200, 200], array_slice(getimagesizefromstring($webp), 0, 2));
+        $this->assertSame('https://example.com/webp', $this->decode($webp));
+    }
+
+    #[DataProvider('renderers')]
+    public function test_quality_makes_a_lossy_webp_that_decodes(string $class)
+    {
+        $webp = (string) $this->generator($class)->format('webp')->quality(70)->size(200)->margin(1)->generate('lossy');
+
+        $this->assertSame('WEBPVP8 ', substr($webp, 8, 8));
+        $this->assertSame('lossy', $this->decode($webp));
+    }
+
+    #[DataProvider('renderers')]
+    public function test_a_merged_logo_and_a_transparent_background_work_in_webp(string $class)
+    {
+        $generator = fn () => $this->generator($class)
+            ->format('webp')
+            ->size(300)
+            ->margin(1)
+            ->errorCorrection('H')
+            ->merge(__DIR__.'/Images/simplesoftware-icon-grey-blue.png', .2, true);
+
+        $this->assertSame('merged webp', $this->decode((string) $generator()->generate('merged webp')));
+
+        // The decoder reads transparent pixels as black: check the alpha channel only.
+        $transparent = (string) $generator()->backgroundColor(255, 255, 255, 0)->generate('transparent webp');
+        $this->assertSame(127, $this->pixel($transparent, 1, 1)['alpha']);
+    }
+
+    #[DataProvider('renderers')]
+    public function test_compression_changes_the_png_size_but_not_the_image(string $class)
+    {
+        $generator = fn () => $this->generator($class)->format('png')->size(300)->margin(1);
+        $smallest = (string) $generator()->generate('compression');
+        $none = (string) $generator()->compression(0)->generate('compression');
+
+        $this->assertGreaterThan(strlen($smallest), strlen($none));
+        $this->assertSame('compression', $this->decode($none));
+        $this->assertSame($this->pixel($smallest, 150, 150), $this->pixel($none, 150, 150));
+    }
+
+    public function test_webp_without_imagick_has_the_limits_of_gd()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage("The webp format needs the imagick extension for style('dot')");
+
+        (new GeneratorWithoutImagick)->format('webp')->style('dot')->generate('nope');
     }
 }

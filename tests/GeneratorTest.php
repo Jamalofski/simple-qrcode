@@ -1,5 +1,9 @@
 <?php
 
+use BaconQrCode\Renderer\Color\Alpha;
+use BaconQrCode\Renderer\Eye\CompositeEye;
+use BaconQrCode\Renderer\Eye\ModuleEye;
+use BaconQrCode\Renderer\Eye\PointyEye;
 use BaconQrCode\Renderer\Eye\SimpleCircleEye;
 use BaconQrCode\Renderer\Eye\SquareEye;
 use BaconQrCode\Renderer\Image\EpsImageBackEnd;
@@ -9,8 +13,12 @@ use BaconQrCode\Renderer\Module\DotsModule;
 use BaconQrCode\Renderer\Module\RoundnessModule;
 use BaconQrCode\Renderer\Module\SquareModule;
 use BaconQrCode\Renderer\RendererStyle\Gradient;
+use BaconQrCode\Renderer\RendererStyle\GradientType;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use SimpleSoftwareIO\QrCode\Eye\CircleEye;
+use SimpleSoftwareIO\QrCode\Eye\RoundedEye;
 use SimpleSoftwareIO\QrCode\Generator;
 
 class GeneratorTest extends TestCase
@@ -220,5 +228,126 @@ class GeneratorTest extends TestCase
     {
         $this->getMockBuilder(\Illuminate\Support\HtmlString::class)->getMock();
         $this->assertInstanceOf(\Illuminate\Support\HtmlString::class, (new Generator)->generate('fooBar'));
+    }
+
+    public static function hexColors(): array
+    {
+        return [
+            '#rrggbb' => ['#1d4ed8', [29, 78, 216], null],
+            'rrggbb without #' => ['1D4ED8', [29, 78, 216], null],
+            '#rgb' => ['#f80', [255, 136, 0], null],
+            '#rrggbbaa' => ['#1d4ed880', [29, 78, 216], 50],
+            '#rgba' => ['#f800', [255, 136, 0], 0],
+            'opaque alpha' => ['#000000ff', [0, 0, 0], 100],
+        ];
+    }
+
+    #[DataProvider('hexColors')]
+    public function test_colors_can_be_set_from_hex(string $hex, array $rgb, ?int $alpha)
+    {
+        $generator = (new Generator)->colorFromHex($hex)->backgroundColorFromHex($hex);
+
+        foreach ([$generator->getFill()->getForegroundColor(), $generator->getFill()->getBackgroundColor()] as $color) {
+            $this->assertSame($rgb, [$color->toRgb()->getRed(), $color->toRgb()->getGreen(), $color->toRgb()->getBlue()]);
+            $this->assertSame($alpha, $color instanceof Alpha ? $color->getAlpha() : null);
+        }
+    }
+
+    public function test_eye_colors_and_gradients_can_be_set_from_hex()
+    {
+        $generator = (new Generator)->eyeColorFromHex(1, '#ff0000', '#00f');
+        $eye = $generator->getFill()->getTopRightEyeFill();
+
+        // Same order as eyeColor().
+        $this->assertSame(255, $eye->getExternalColor()->toRgb()->getRed());
+        $this->assertSame(255, $eye->getInternalColor()->toRgb()->getBlue());
+
+        $gradient = (new Generator)->gradientFromHex('#000', '#ffffff', 'radial')->getFill()->getForegroundGradient();
+        $this->assertSame(0, $gradient->getStartColor()->toRgb()->getRed());
+        $this->assertSame(255, $gradient->getEndColor()->toRgb()->getRed());
+        $this->assertSame(GradientType::RADIAL(), $gradient->getType());
+    }
+
+    public static function invalidHexColors(): array
+    {
+        return [['#12345'], ['red'], ['#ggg'], ['##fff'], ['']];
+    }
+
+    #[DataProvider('invalidHexColors')]
+    public function test_an_invalid_hex_color_throws_an_exception(string $hex)
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new Generator)->colorFromHex($hex);
+    }
+
+    public function test_eye_color_from_hex_checks_the_eye_number()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new Generator)->eyeColorFromHex(3, '#000', '#fff');
+    }
+
+    public function test_new_eye_styles_are_set()
+    {
+        $this->assertInstanceOf(RoundedEye::class, (new Generator)->eye('rounded')->getEye());
+        $this->assertInstanceOf(PointyEye::class, (new Generator)->eye('pointy')->getEye());
+    }
+
+    public function test_external_and_internal_eyes_are_set_over_the_eye_style()
+    {
+        $eye = (new Generator)->eye('rounded')->externalEye('circle')->getEye();
+        $this->assertInstanceOf(CompositeEye::class, $eye);
+        $this->assertEquals(CircleEye::instance()->getExternalPath(), $eye->getExternalPath());
+        $this->assertEquals(RoundedEye::instance()->getInternalPath(), $eye->getInternalPath());
+
+        $eye = (new Generator)->internalEye('circle')->getEye();
+        $this->assertEquals(SimpleCircleEye::instance()->getInternalPath(), $eye->getInternalPath());
+        $this->assertEquals((new ModuleEye(SquareModule::instance()))->getExternalPath(), $eye->getExternalPath());
+
+        // eye('circle') still keeps the square ring of bacon's SimpleCircleEye.
+        $this->assertEquals(SquareEye::instance()->getExternalPath(), (new Generator)->eye('circle')->getEye()->getExternalPath());
+    }
+
+    public function test_invalid_external_and_internal_eyes_throw_an_exception()
+    {
+        foreach (['externalEye', 'internalEye'] as $method) {
+            try {
+                (new Generator)->$method('star');
+                $this->fail("{$method}('star') was accepted.");
+            } catch (InvalidArgumentException $e) {
+                $this->assertStringContainsString('square, circle, rounded or pointy', $e->getMessage());
+            }
+        }
+    }
+
+    public function test_quality_and_compression_check_their_range()
+    {
+        $this->assertInstanceOf(Generator::class, (new Generator)->quality(0)->quality(100)->compression(0)->compression(9));
+
+        foreach ([fn () => (new Generator)->quality(101), fn () => (new Generator)->quality(-1), fn () => (new Generator)->compression(10), fn () => (new Generator)->compression(-1)] as $call) {
+            try {
+                $call();
+                $this->fail('An out of range value was accepted.');
+            } catch (InvalidArgumentException $e) {
+                $this->assertStringContainsString('must be between', $e->getMessage());
+            }
+        }
+    }
+
+    public function test_the_imagick_compression_follows_the_level()
+    {
+        if (! extension_loaded('imagick')) {
+            $this->markTestSkipped('The imagick extension is not installed.');
+        }
+
+        $quality = fn (Generator $g) => (fn () => $this->compressionQuality)->call($g->getFormatter());
+
+        $this->assertSame(100, $quality((new Generator)->format('png')));
+        $this->assertSame(30, $quality((new Generator)->format('png')->compression(3)));
+        $this->assertInstanceOf(ImagickImageBackEnd::class, (new Generator)->format('webp')->getFormatter());
+    }
+
+    public function test_webp_is_a_valid_format()
+    {
+        $this->assertInstanceOf(Generator::class, (new Generator)->format('webp'));
     }
 }

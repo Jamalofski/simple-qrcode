@@ -8,8 +8,10 @@ use BaconQrCode\Exception\WriterException;
 use BaconQrCode\Renderer\Color\Alpha;
 use BaconQrCode\Renderer\Color\ColorInterface;
 use BaconQrCode\Renderer\Color\Rgb;
+use BaconQrCode\Renderer\Eye\CompositeEye;
 use BaconQrCode\Renderer\Eye\EyeInterface;
 use BaconQrCode\Renderer\Eye\ModuleEye;
+use BaconQrCode\Renderer\Eye\PointyEye;
 use BaconQrCode\Renderer\Eye\SimpleCircleEye;
 use BaconQrCode\Renderer\Eye\SquareEye;
 use BaconQrCode\Renderer\GDLibRenderer;
@@ -32,11 +34,15 @@ use BadMethodCallException;
 use InvalidArgumentException;
 use RuntimeException;
 use SimpleSoftwareIO\QrCode\DataTypes\DataTypeInterface;
+use SimpleSoftwareIO\QrCode\DataTypes\EPC;
+use SimpleSoftwareIO\QrCode\Eye\CircleEye;
+use SimpleSoftwareIO\QrCode\Eye\RoundedEye;
 
 /**
  * Helpers resolved by __call() from the classes of the DataTypes namespace.
  *
  * @method \Illuminate\Support\HtmlString|string|null BTC(string $address, float|null $amount = null, array $options = [])
+ * @method \Illuminate\Support\HtmlString|string|null EPC(array $transfer)
  * @method \Illuminate\Support\HtmlString|string|null email(?string $to = null, ?string $subject = null, ?string $body = null)
  * @method \Illuminate\Support\HtmlString|string|null geo(float $latitude, float $longitude)
  * @method \Illuminate\Support\HtmlString|string|null phoneNumber(string $phoneNumber)
@@ -107,11 +113,39 @@ class Generator
 
     /**
      * The style to apply to the eye.
-     * Possible values are circle and square.
+     * Possible values are square, circle, rounded and pointy.
      *
      * @var string|null
      */
     protected $eyeStyle = null;
+
+    /**
+     * The style of the external part of the eyes, over $eyeStyle.
+     *
+     * @var string|null
+     */
+    protected $externalEyeStyle = null;
+
+    /**
+     * The style of the internal part of the eyes, over $eyeStyle.
+     *
+     * @var string|null
+     */
+    protected $internalEyeStyle = null;
+
+    /**
+     * The quality of a webp image, from 0 to 100. Null means lossless.
+     *
+     * @var int|null
+     */
+    protected $quality = null;
+
+    /**
+     * The zlib compression level of a png image, from 0 to 9. Null means 9.
+     *
+     * @var int|null
+     */
+    protected $compression = null;
 
     /**
      * The foreground color of the QrCode.
@@ -166,6 +200,15 @@ class Generator
         $dataType = $this->createClass($method);
         $dataType->create($arguments);
 
+        if ($dataType instanceof EPC) {
+            // The EPC guidelines require error correction M and a character set that matches
+            // the bytes of the QR code. Neither changes the settings of this generator.
+            $generator = clone $this;
+            $generator->errorCorrection = $this->errorCorrection ?? ErrorCorrectionLevel::M();
+
+            return $generator->generate($dataType->forEncoding($this->encoding));
+        }
+
         return $this->generate(strval($dataType));
     }
 
@@ -187,9 +230,17 @@ class Generator
 
         $qrCode = $writer->writeString($text, $this->encoding, $this->errorCorrection);
 
-        if ($this->imageMerge !== null && $this->format === 'png') {
+        if ($this->imageMerge !== null && in_array($this->format, ['png', 'webp'])) {
             $merger = new ImageMerge(new Image($qrCode), new Image($this->imageMerge));
             $qrCode = $merger->merge($this->imagePercentage);
+        }
+
+        if ($this->imageMerge !== null && $this->format === 'svg') {
+            $qrCode = (new SvgImageMerge($qrCode, $this->imageMerge))->merge($this->imagePercentage);
+        }
+
+        if ($this->format === 'webp') {
+            $qrCode = $this->convertToWebp($qrCode);
         }
 
         if ($filename) {
@@ -262,8 +313,8 @@ class Generator
      */
     public function format(string $format): self
     {
-        if (! in_array($format, ['svg', 'eps', 'png'])) {
-            throw new InvalidArgumentException("\$format must be svg, eps, or png. {$format} is not a valid.");
+        if (! in_array($format, ['svg', 'eps', 'png', 'webp'])) {
+            throw new InvalidArgumentException("\$format must be svg, eps, png, or webp. {$format} is not a valid.");
         }
 
         $this->format = $format;
@@ -304,6 +355,34 @@ class Generator
     }
 
     /**
+     * Sets the foreground color of the QrCode from a hex color.
+     *
+     * @param string $hex #rgb, #rgba, #rrggbb or #rrggbbaa, with or without the #
+     * @return Generator
+     * @throws InvalidArgumentException
+     */
+    public function colorFromHex(string $hex): self
+    {
+        $this->color = $this->hexToColor($hex);
+
+        return $this;
+    }
+
+    /**
+     * Sets the background color of the QrCode from a hex color.
+     *
+     * @param string $hex #rgb, #rgba, #rrggbb or #rrggbbaa, with or without the #
+     * @return Generator
+     * @throws InvalidArgumentException
+     */
+    public function backgroundColorFromHex(string $hex): self
+    {
+        $this->backgroundColor = $this->hexToColor($hex);
+
+        return $this;
+    }
+
+    /**
      * Sets the eye color for the provided eye index.
      *
      * @param int $eyeNumber
@@ -330,6 +409,27 @@ class Generator
         return $this;
     }
 
+    /**
+     * Sets the eye color for the provided eye index from hex colors,
+     * in the same order as eyeColor().
+     *
+     * @param int $eyeNumber
+     * @param string $innerHex
+     * @param string $outterHex
+     * @return Generator
+     * @throws InvalidArgumentException
+     */
+    public function eyeColorFromHex(int $eyeNumber, string $innerHex, string $outterHex = '#000000'): self
+    {
+        if ($eyeNumber < 0 || $eyeNumber > 2) {
+            throw new InvalidArgumentException("\$eyeNumber must be 0, 1, or 2.  {$eyeNumber} is not valid.");
+        }
+
+        $this->eyeColors[$eyeNumber] = new EyeFill($this->hexToColor($innerHex), $this->hexToColor($outterHex));
+
+        return $this;
+    }
+
     public function gradient($startRed, $startGreen, $startBlue, $endRed, $endGreen, $endBlue, string $type): self
     {
         $type = strtoupper($type);
@@ -343,19 +443,97 @@ class Generator
     }
 
     /**
-     * Sets the eye style.
+     * Sets a gradient from hex colors.
      *
-     * @param string $style
+     * @param string $startHex
+     * @param string $endHex
+     * @param string $type vertical, horizontal, diagonal, inverse_diagonal or radial
+     * @return Generator
+     * @throws InvalidArgumentException
+     */
+    public function gradientFromHex(string $startHex, string $endHex, string $type): self
+    {
+        $type = strtoupper($type);
+        $this->gradient = new Gradient($this->hexToColor($startHex), $this->hexToColor($endHex), GradientType::$type());
+
+        return $this;
+    }
+
+    /**
+     * Sets the eye style, for the external and internal parts of the eyes.
+     *
+     * @param string $style square, circle, rounded or pointy
      * @return Generator
      * @throws InvalidArgumentException
      */
     public function eye(string $style): self
     {
-        if (! in_array($style, ['square', 'circle'])) {
-            throw new InvalidArgumentException("\$style must be square or circle. {$style} is not a valid eye style.");
+        $this->eyeStyle = $this->validEyeStyle($style);
+
+        return $this;
+    }
+
+    /**
+     * Sets the style of the external part of the eyes, the ring, over the one set with eye().
+     *
+     * @param string $style square, circle, rounded or pointy
+     * @return Generator
+     * @throws InvalidArgumentException
+     */
+    public function externalEye(string $style): self
+    {
+        $this->externalEyeStyle = $this->validEyeStyle($style);
+
+        return $this;
+    }
+
+    /**
+     * Sets the style of the internal part of the eyes, the center, over the one set with eye().
+     *
+     * @param string $style square, circle, rounded or pointy
+     * @return Generator
+     * @throws InvalidArgumentException
+     */
+    public function internalEye(string $style): self
+    {
+        $this->internalEyeStyle = $this->validEyeStyle($style);
+
+        return $this;
+    }
+
+    /**
+     * Sets the quality of a webp image. Without it, webp is lossless.
+     *
+     * @param int $quality from 0 to 100
+     * @return Generator
+     * @throws InvalidArgumentException
+     */
+    public function quality(int $quality): self
+    {
+        if ($quality < 0 || $quality > 100) {
+            throw new InvalidArgumentException("\$quality must be between 0 and 100. {$quality} is not valid.");
         }
 
-        $this->eyeStyle = $style;
+        $this->quality = $quality;
+
+        return $this;
+    }
+
+    /**
+     * Sets the zlib compression level of a png image. Png is lossless: the level
+     * only trades the file size against the time to write it. The default is 9.
+     *
+     * @param int $level from 0 (none, fastest) to 9 (smallest file)
+     * @return Generator
+     * @throws InvalidArgumentException
+     */
+    public function compression(int $level): self
+    {
+        if ($level < 0 || $level > 9) {
+            throw new InvalidArgumentException("\$level must be between 0 and 9. {$level} is not valid.");
+        }
+
+        $this->compression = $level;
 
         return $this;
     }
@@ -472,12 +650,13 @@ class Generator
 
     /**
      * Whether a png is rendered with GD, because imagick is not installed.
+     * A webp image is a png converted by GD, so this applies to webp too.
      *
      * @return bool
      */
     public function usesGdForPng(): bool
     {
-        return $this->format === 'png' && ! $this->imagickIsAvailable();
+        return in_array($this->format, ['png', 'webp']) && ! $this->imagickIsAvailable();
     }
 
     /**
@@ -495,8 +674,10 @@ class Generator
             $unsupported[] = "style('{$this->style}')";
         }
 
-        if ($this->eyeStyle === 'circle') {
-            $unsupported[] = "eye('circle')";
+        foreach (['eye' => $this->eyeStyle, 'externalEye' => $this->externalEyeStyle, 'internalEye' => $this->internalEyeStyle] as $method => $eyeStyle) {
+            if ($eyeStyle !== null && $eyeStyle !== 'square') {
+                $unsupported[] = "{$method}('{$eyeStyle}')";
+            }
         }
 
         if ($this->gradient) {
@@ -505,13 +686,13 @@ class Generator
 
         if ($unsupported) {
             throw new RuntimeException(
-                'The png format needs the imagick extension for '.implode(', ', $unsupported).'. '
-                .'Without imagick, png is rendered with GD, which draws square modules and square eyes only, without gradient. '
+                "The {$this->format} format needs the imagick extension for ".implode(', ', $unsupported).'. '
+                ."Without imagick, {$this->format} is rendered with GD, which draws square modules and square eyes only, without gradient. "
                 .'Install imagick, or use the svg or eps format.'
             );
         }
 
-        return new GDLibRenderer($this->pixels, $this->margin, 'png', 9, $this->getFill());
+        return new GDLibRenderer($this->pixels, $this->margin, 'png', $this->compression ?? 9, $this->getFill());
     }
 
     /**
@@ -531,8 +712,9 @@ class Generator
      */
     public function getFormatter(): ImageBackEndInterface
     {
-        if ($this->format === 'png') {
-            return new ImagickImageBackEnd('png');
+        if (in_array($this->format, ['png', 'webp'])) {
+            // ImageMagick reads the png "quality" as the zlib level (tens) and the filter (units).
+            return new ImagickImageBackEnd('png', $this->compression === null ? 100 : $this->compression * 10);
         }
 
         if ($this->format === 'eps') {
@@ -567,15 +749,103 @@ class Generator
      */
     public function getEye(): EyeInterface
     {
-        if ($this->eyeStyle === 'square') {
-            return SquareEye::instance();
+        $eye = $this->createEye($this->eyeStyle) ?? new ModuleEye($this->getModule());
+
+        if ($this->externalEyeStyle === null && $this->internalEyeStyle === null) {
+            return $eye;
         }
 
-        if ($this->eyeStyle === 'circle') {
-            return SimpleCircleEye::instance();
+        // eye('circle') keeps bacon's square ring; externalEye('circle') asks for a round one.
+        $external = $this->externalEyeStyle === 'circle' ? CircleEye::instance() : $this->createEye($this->externalEyeStyle);
+
+        return new CompositeEye($external ?? $eye, $this->createEye($this->internalEyeStyle) ?? $eye);
+    }
+
+    /**
+     * Creates the eye of a style, or null without a style.
+     *
+     * @param string|null $style
+     * @return EyeInterface|null
+     */
+    protected function createEye(?string $style): ?EyeInterface
+    {
+        return match ($style) {
+            'square' => SquareEye::instance(),
+            'circle' => SimpleCircleEye::instance(),
+            'rounded' => RoundedEye::instance(),
+            'pointy' => PointyEye::instance(),
+            default => null,
+        };
+    }
+
+    /**
+     * Checks an eye style.
+     *
+     * @param string $style
+     * @return string
+     * @throws InvalidArgumentException
+     */
+    protected function validEyeStyle(string $style): string
+    {
+        if (! in_array($style, ['square', 'circle', 'rounded', 'pointy'])) {
+            throw new InvalidArgumentException("\$style must be square, circle, rounded or pointy. {$style} is not a valid eye style.");
         }
 
-        return new ModuleEye($this->getModule());
+        return $style;
+    }
+
+    /**
+     * Converts a hex color to a RGB or Alpha channel color.
+     *
+     * @param string $hex #rgb, #rgba, #rrggbb or #rrggbbaa, with or without the #
+     * @return ColorInterface
+     * @throws InvalidArgumentException
+     */
+    protected function hexToColor(string $hex): ColorInterface
+    {
+        $digits = str_starts_with($hex, '#') ? substr($hex, 1) : $hex;
+
+        if (! preg_match('/^(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $digits)) {
+            throw new InvalidArgumentException("{$hex} is not a valid hex color. Use #rgb, #rgba, #rrggbb or #rrggbbaa.");
+        }
+
+        if (strlen($digits) <= 4) {
+            $digits = preg_replace('/(.)/', '$1$1', $digits);
+        }
+
+        [$red, $green, $blue] = array_map('hexdec', str_split(substr($digits, 0, 6), 2));
+        // The alpha byte (00 to ff) becomes the 0 to 100 alpha of the other color methods.
+        $alpha = strlen($digits) === 8 ? (int) round(hexdec(substr($digits, 6, 2)) * 100 / 255) : null;
+
+        return $this->createColor($red, $green, $blue, $alpha);
+    }
+
+    /**
+     * Converts a png image to webp with GD: lossless, or lossy with quality().
+     *
+     * @param string $png
+     * @return string
+     * @throws RuntimeException when GD has no WebP support
+     */
+    protected function convertToWebp(string $png): string
+    {
+        if (! function_exists('imagewebp')) {
+            throw new RuntimeException('The webp format needs the GD extension with WebP support.');
+        }
+
+        $image = imagecreatefromstring($png);
+
+        if (! imageistruecolor($image)) {
+            imagepalettetotruecolor($image);
+        }
+
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+
+        ob_start();
+        imagewebp($image, null, $this->quality ?? (defined('IMG_WEBP_LOSSLESS') ? IMG_WEBP_LOSSLESS : 101));
+
+        return ob_get_clean();
     }
 
     /**

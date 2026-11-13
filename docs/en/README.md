@@ -14,7 +14,7 @@ Coming from `simplesoftwareio/simple-qrcode`: replace it with `jamalofski/simple
 
 Upgrade from v2 or v3 by changing your `composer.json` file to `^4.3`
 
-`png` images are rendered with `imagick` when it is installed, and with GD otherwise. GD draws square modules and square eyes only, without gradient: `style('dot')`, `style('round')`, `eye('circle')` and `gradient()` need `imagick` in `png`, and throw an exception without it. `svg` and `eps` support every option.
+`png` and `webp` images are rendered with `imagick` when it is installed, and with GD otherwise. GD draws square modules and square eyes only, without gradient: `style('dot')`, `style('round')`, eye styles other than `square` and `gradient()` need `imagick` in `png` and `webp`, and throw an exception without it. `svg` and `eps` support every option.
 
 #### v4
 
@@ -93,13 +93,23 @@ The `generate` method has a second parameter that will accept a filename and pat
 
 #### Format `(string $format)`
 
-Three formats are currently supported; `png,` `eps,` and `svg`.  To change the format use the following code:
+Four formats are supported: `png`, `webp`, `eps` and `svg`. To change the format use the following code:
 
 	QrCode::format('png');  //Will return a png image
+	QrCode::format('webp'); //Will return a webp image
 	QrCode::format('eps');  //Will return a eps image
 	QrCode::format('svg');  //Will return a svg image
 
-> Without `imagick`, `png` is rendered with GD: square modules and square eyes only, without gradient.
+> Without `imagick`, `png` and `webp` are rendered with GD: square modules and square eyes only, without gradient.
+
+A `webp` image is lossless by default, and usually smaller than the same `png`. It needs GD with WebP support, which most PHP builds have. `quality` makes it lossy, from 0 to 100; QrCodes compress so well without loss that a lossy `webp` is often larger.
+
+	QrCode::format('webp')->generate('Make me into a QrCode!'); // Lossless
+	QrCode::format('webp')->quality(80)->generate('Make me into a QrCode!'); // Lossy
+
+A `png` image is always lossless. `compression` sets its zlib level, from 0 (no compression, fastest) to 9 (smallest file, the default): it changes the size of the file and the time to write it, never the image.
+
+	QrCode::format('png')->compression(1)->generate('Make me into a QrCode!');
 
 #### Size `(int $size)`
 
@@ -128,6 +138,15 @@ You can change the background color of a QrCode by calling the `backgroundColor`
 	QrCode::backgroundColor(255, 0, 0, 25); //Red background QrCode with 25% transparency 
 
 ![Red Background QrCode](../imgs/red-background.png) ![Red Transparent Background QrCode](../imgs/red-25-transparent-background.png)
+
+#### Hex Colors
+
+Every color method has a twin that takes hex colors: `#rgb`, `#rgba`, `#rrggbb` or `#rrggbbaa`, with or without the `#`. The alpha digits go from `00`, transparent, to `ff`, opaque.
+
+	QrCode::colorFromHex('#1d4ed8');
+	QrCode::backgroundColorFromHex('#ffffff00'); // Transparent background
+	QrCode::eyeColorFromHex(0, '#e11d48', '#0f172a'); // Same order as eyeColor()
+	QrCode::gradientFromHex('#1d4ed8', '#7c3aed', 'diagonal');
 
 #### Gradient `$startRed, $startGreen, $startBlue, $endRed, $endGreen, $endBlue, string $type)`
 
@@ -176,7 +195,7 @@ Unless you choose an eye style, the `dot` style draws the eyes with dots too, an
 
 #### Eye Style `(string $style)`
 
-The eye within the QrCode supports two different styles, `square` and `circle`.
+The eye within the QrCode supports four styles: `square`, `circle`, `rounded` and `pointy`.
 
 	QrCode::eye('circle'); // Uses the `circle` style eye.
 
@@ -184,6 +203,21 @@ The eye within the QrCode supports two different styles, `square` and `circle`.
 | --- | --- |
 | `square` | ![Square](../imgs/200-pixels.png) |
 | `circle` | ![Circle](../imgs/circle-eye.png)|
+| `rounded` | ![Rounded](../imgs/rounded-eye.png)|
+| `pointy` | ![Pointy](../imgs/pointy-eye.png)|
+
+`eye('circle')` rounds the center of the eye and keeps its square ring, as it always did.
+
+#### External and Internal Eye `(string $style)`
+
+`externalEye` styles the ring of the eyes and `internalEye` their center, over the style set with `eye`. They take the same four styles. With `externalEye('circle')`, the ring is round.
+
+	QrCode::externalEye('circle')->internalEye('circle'); // Round ring, round center
+	QrCode::eye('rounded')->internalEye('square'); // Rounded ring, square center
+
+| Example | Result |
+| --- | --- |
+| `externalEye('circle')->internalEye('circle')` | ![Round ring](../imgs/circle-external-eye.png)|
 
 #### Margin `(int $margin)`
 
@@ -258,8 +292,12 @@ The `merge` method merges an image over a QrCode.  This is commonly used to plac
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
 	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
 
->The `merge` method only supports PNG at this time.
+>The `merge` method works with the `png`, `webp` and `svg` formats; `eps` ignores it.
 >The filepath is relative to app base path if `$absolute` is set to `false`.  Change this variable to `true` to use absolute paths.
+
+>In `svg`, the image is embedded in the QrCode as a data URI. It can be a png, jpeg, gif, webp or svg image. Browsers show an svg logo; a few converters, such as old versions of librsvg, leave it out: use a png logo for them.
+
+	QrCode::errorCorrection('H')->merge('path-to-logo.svg', .25)->generate(); // svg QrCode with an svg logo
 
 >You should use a high level of error correction when using the `merge` method to ensure that the QrCode is still readable.  We recommend using `errorCorrection('H')`.
 
@@ -275,7 +313,7 @@ The `mergeString` method can be used to achieve the same as the `merge` call, ex
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
 	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
 
->As with the normal `merge` call, only PNG is supported at this time. The same applies for error correction, high levels are recommened.
+>As with the normal `merge` call, it works with `png`, `webp` and `svg`. The same applies for error correction, high levels are recommened.
 
 #### Advance Usage
 
@@ -310,6 +348,23 @@ This helper generates a scannable bitcoin to send payments.  [More information](
         'message' => 'my message',
         'returnAddress' => 'https://www.returnaddress.com'
     ]);
+
+#### SEPA Credit Transfer (EPC)
+
+This helper makes the EPC QR code of a SEPA credit transfer, also known as GiroCode: banking apps read it to fill in the transfer. It follows the EPC069-12 guidelines, version 002.
+
+	QrCode::EPC([
+		'name' => 'Red Cross of Belgium',  // Beneficiary, required, 70 characters at most
+		'iban' => 'BE72 0000 0000 1616',   // Required; spaces are removed and the checksum is checked
+		'bic' => 'BPOTBEB1',               // Optional within the EEA
+		'amount' => 10.50,                 // Optional, in euros, from 0.01 to 999999999.99
+		'purpose' => 'CHAR',               // Optional purpose code, four letters
+		'text' => 'Donation',              // Optional remittance text, 140 characters at most
+	]);
+
+Instead of `text`, `reference` takes a structured creditor reference (RF...), 35 characters at most; an EPC QR code holds one or the other. `information` adds a note for the payer, 70 characters at most.
+
+The QrCode uses error correction `M`, as the guidelines require, unless you set another with `errorCorrection`. Its character set follows the encoding of the QrCode: ISO-8859-1 by default, which covers the names of Western Europe. For other names, use `encoding('UTF-8')`. An invalid transfer throws an `InvalidArgumentException`.
 
 #### E-Mail
 

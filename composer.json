@@ -42,7 +42,7 @@
         "simplesoftwareio/simple-qrcode": "self.version"
     },
     "suggest": {
-        "ext-imagick": "Needed in png for dot and round styles, circle eyes and gradients. Without it, png is rendered with GD: square modules and square eyes only.",
+        "ext-imagick": "Needed in png and webp for dot and round styles, eye styles other than square and gradients. Without it, png and webp are rendered with GD: square modules and square eyes only.",
         "illuminate/support": "Allows for use within Laravel."
     },
     "autoload": {
@@ -55,7 +55,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "4.3.x-dev"
+            "dev-main": "4.4.x-dev"
         },
         "laravel": {
             "providers": [

@@ -3,11 +3,19 @@ Simple QrCode
 
 ##Change Log
 
-#### 4.3.1 (unreleased)
+#### 4.4.0 (unreleased)
+No existing signature changes. Two behaviors do: `wiFi()` escapes special characters, and `merge()` now applies to `svg`, where it was ignored.
+* `webp` format, lossless by default and usually smaller than `png`; `quality()` makes it lossy (upstream #306). It is a `png` converted by GD, so it takes every `png` option, merged logos included.
+* `compression()` sets the zlib level of a `png`, from 0 to 9 (upstream #209, idea and first version in upstream PR #288 by [dxhung89](https://github.com/dxhung89)).
+* Hex colors: `colorFromHex()`, `backgroundColorFromHex()`, `eyeColorFromHex()` and `gradientFromHex()` take `#rgb`, `#rgba`, `#rrggbb` or `#rrggbbaa` (upstream PR #276 by [fredbradley](https://github.com/fredbradley)). `color()` and the other methods keep their signatures.
+* Eyes: new `rounded` and `pointy` styles; `externalEye()` and `internalEye()` style the ring and the center of the eyes over `eye()`, and `externalEye('circle')` draws a round ring (upstream #250, #302, PR #307 by [IggsGrey](https://github.com/IggsGrey)). `eye('circle')` keeps its square ring, as before.
+* `merge()` and `mergeString()` work in `svg`: the logo is embedded as a data URI, png, jpeg, gif, webp or svg (upstream #166). An `svg` QrCode generated after `merge()` now shows the logo; any other kind of image throws an `InvalidArgumentException`. `eps` still ignores them.
+* `EPC()` helper: the EPC QR code of a SEPA credit transfer (GiroCode), following the EPC069-12 guidelines, with the IBAN checksum, the field lengths and the 331-byte limit checked, error correction `M` and a character set matching the encoding (upstream PR #283 by [RF1705](https://github.com/RF1705)).
 * `wiFi()` escapes `\`, `;`, `,`, `"` and `:` in the SSID, the password and the encryption with a backslash, as phone readers expect. A password containing `;` gave a QR code that could not connect. If you escaped these characters yourself, remove your escaping.
 * Documentation: unless an eye style is set, the `dot` style draws the eyes with dots, and some readers, ZXing among them, cannot find them (upstream #204). The documentation now recommends `eye('square')` or `eye('circle')` with it.
-* `composer.json`: the `ext-imagick` suggestion no longer says it is needed for `png`. Since 4.3.0, `png` is rendered with GD without it; `imagick` is needed only for dot and round styles, circle eyes and gradients.
-* Upstream #290 (round style broken in `eps`) no longer reproduces with bacon 3: the `eps` output matches the `svg` one and decodes.
+* Documentation: `png` gradients fail on ImageMagick 7.1.2-19 to 7.1.2-21 and 6.9.13-44 to 6.9.13-46, a regression of the CVE-2026-33901 fix that ImageMagick fixed in 7.1.2-22 and 6.9.13-47.
+* `composer.json`: the `ext-imagick` suggestion no longer says it is needed for `png`. Since 4.3.0, `png` is rendered with GD without it; `imagick` is needed only for dot and round styles, eye styles other than square and gradients.
+* Upstream #290 (round style broken in `eps`) and #211 (a gradient with a margin cut the eyes off in `png`) no longer reproduce with bacon 3.
 
 #### 4.3.0 (2026-11-13)
 * First release of the maintained fork, published as `jamalofski/simple-qrcode`. It declares `replace` for `simplesoftwareio/simple-qrcode`: same namespace, same facade, same API.
