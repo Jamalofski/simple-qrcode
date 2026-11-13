@@ -3,7 +3,7 @@ Simple QrCode
 
 ##Change Log
 
-#### 4.4.0 (unreleased)
+#### 4.4.0 (2026-11-13)
 No existing signature changes. Three behaviors do, listed first. `Generator` gains public methods (`colorFromHex`, `backgroundColorFromHex`, `eyeColorFromHex`, `gradientFromHex`, `externalEye`, `internalEye`, `quality`, `compression`): a subclass that already defines one of them must match its new signature.
 * Behavior: without `errorCorrection()`, a merged logo raises the error correction from `L` to `H`. At `L`, most codes did not read behind a logo: 1 test code in 5 with a logo of 20%, none with 30%; all of them at `H`.
 * Behavior: `merge()` and `mergeString()` now apply to `svg`, where they were ignored (upstream #166): the logo is embedded as a data URI, any raster image PHP recognizes or an svg image. Content that is not an image throws an `InvalidArgumentException`. `eps` still ignores them.
