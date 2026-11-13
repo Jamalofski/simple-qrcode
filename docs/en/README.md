@@ -143,6 +143,8 @@ The following gradient types are supported:
 | `inverse_diagonal` | ![Invrse Diagonal](../imgs/inverse_diagonal.png) |
 | `radial` | ![Radial](../imgs/radial.png) |
 
+In `png`, gradients fail with `non-conforming drawing primitive definition 'push'` on ImageMagick 7.1.2-19 to 7.1.2-21 and 6.9.13-44 to 6.9.13-46, and on distribution packages that took the CVE-2026-33901 fix without its follow-up. Update ImageMagick: 7.1.2-22 and 6.9.13-47 fixed it.
+
 #### EyeColor `(int $eyeNumber, int $innerRed, int $innerGreen, int $innerBlue, int $outterRed = 0, int $outterGreen = 0, int $outterBlue = 0)`
 
 You may change the eye colors by using the `eyeColor` method.
