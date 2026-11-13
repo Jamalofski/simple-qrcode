@@ -12,6 +12,7 @@ use BaconQrCode\Renderer\Eye\EyeInterface;
 use BaconQrCode\Renderer\Eye\ModuleEye;
 use BaconQrCode\Renderer\Eye\SimpleCircleEye;
 use BaconQrCode\Renderer\Eye\SquareEye;
+use BaconQrCode\Renderer\GDLibRenderer;
 use BaconQrCode\Renderer\Image\EpsImageBackEnd;
 use BaconQrCode\Renderer\Image\ImageBackEndInterface;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
@@ -29,8 +30,19 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use BadMethodCallException;
 use InvalidArgumentException;
+use RuntimeException;
 use SimpleSoftwareIO\QrCode\DataTypes\DataTypeInterface;
 
+/**
+ * Helpers resolved by __call() from the classes of the DataTypes namespace.
+ *
+ * @method \Illuminate\Support\HtmlString|string|null BTC(string $address, float|null $amount = null, array $options = [])
+ * @method \Illuminate\Support\HtmlString|string|null email(?string $to = null, ?string $subject = null, ?string $body = null)
+ * @method \Illuminate\Support\HtmlString|string|null geo(float $latitude, float $longitude)
+ * @method \Illuminate\Support\HtmlString|string|null phoneNumber(string $phoneNumber)
+ * @method \Illuminate\Support\HtmlString|string|null SMS(string $phoneNumber, ?string $message = null)
+ * @method \Illuminate\Support\HtmlString|string|null wiFi(array $settings)
+ */
 class Generator
 {
     /**
@@ -165,10 +177,15 @@ class Generator
      * @return void|\Illuminate\Support\HtmlString|string
      * @throws WriterException
      * @throws InvalidArgumentException
+     * @throws RuntimeException when png is requested without imagick and with an option GD cannot render
      */
     public function generate(string $text, ?string $filename = null)
     {
-        $qrCode = $this->getWriter($this->getRenderer())->writeString($text, $this->encoding, $this->errorCorrection);
+        $writer = $this->usesGdForPng()
+            ? new Writer($this->getGdRenderer())
+            : $this->getWriter($this->getRenderer());
+
+        $qrCode = $writer->writeString($text, $this->encoding, $this->errorCorrection);
 
         if ($this->imageMerge !== null && $this->format === 'png') {
             $merger = new ImageMerge(new Image($qrCode), new Image($this->imageMerge));
@@ -451,6 +468,60 @@ class Generator
     public function getRendererStyle(): RendererStyle
     {
         return new RendererStyle($this->pixels, $this->margin, $this->getModule(), $this->getEye(), $this->getFill());
+    }
+
+    /**
+     * Whether a png is rendered with GD, because imagick is not installed.
+     *
+     * @return bool
+     */
+    public function usesGdForPng(): bool
+    {
+        return $this->format === 'png' && ! $this->imagickIsAvailable();
+    }
+
+    /**
+     * Fetches the GD renderer used for png when imagick is not installed.
+     * GD draws square modules and square eyes only, without gradient.
+     *
+     * @return GDLibRenderer
+     * @throws RuntimeException when an option GD cannot render is set
+     */
+    public function getGdRenderer(): GDLibRenderer
+    {
+        $unsupported = [];
+
+        if ($this->style !== 'square') {
+            $unsupported[] = "style('{$this->style}')";
+        }
+
+        if ($this->eyeStyle === 'circle') {
+            $unsupported[] = "eye('circle')";
+        }
+
+        if ($this->gradient) {
+            $unsupported[] = 'gradient()';
+        }
+
+        if ($unsupported) {
+            throw new RuntimeException(
+                'The png format needs the imagick extension for '.implode(', ', $unsupported).'. '
+                .'Without imagick, png is rendered with GD, which draws square modules and square eyes only, without gradient. '
+                .'Install imagick, or use the svg or eps format.'
+            );
+        }
+
+        return new GDLibRenderer($this->pixels, $this->margin, 'png', 9, $this->getFill());
+    }
+
+    /**
+     * Whether the imagick extension is available.
+     *
+     * @return bool
+     */
+    protected function imagickIsAvailable(): bool
+    {
+        return extension_loaded('imagick');
     }
 
     /**

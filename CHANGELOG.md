@@ -8,6 +8,10 @@ Simple QrCode
 * Requires `bacon/bacon-qr-code` ^3, so it installs next to `laravel/fortify` and the official Laravel starter kits.
 * Requires PHP 8.2 or later. Supports PHP 8.2 to 8.5 and Laravel 11 to 13.
 * `generate()` declares `$filename` as nullable (PHP 8.4 deprecation).
+* `png` works without `imagick`: it is rendered with GD (bacon `GDLibRenderer`) when `imagick` is missing. Options GD cannot draw (dot and round styles, circle eyes, gradients) throw a clear `RuntimeException` instead of failing in `imagick`.
+* Merged logos keep a transparent background transparent (it turned opaque black).
+* `email()` and `BTC()` encode spaces as `%20` instead of `+` (RFC 6068, BIP 21): iOS Mail showed the `+` signs.
+* The `QrCode` facade and the generator declare their methods in PHPDoc, for IDE completion of chained calls.
 * Documentation: links to the original project website removed (the domain no longer belongs to the project).
 
 #### 2.0.0

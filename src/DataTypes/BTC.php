@@ -118,7 +118,7 @@ class BTC implements DataTypeInterface
             'label'     => $this->label,
             'message'  => $this->message,
             'r'         => $this->returnAddress,
-        ]);
+        ], '', '&', PHP_QUERY_RFC3986);
 
         $btc = $this->prefix.$this->address.'?'.$query;
 

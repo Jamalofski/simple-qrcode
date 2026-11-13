@@ -18,7 +18,7 @@ composer require jamalofski/simple-qrcode
 
 Laravel discovers the service provider and the `QrCode` alias automatically.
 
-You must install the `imagick` PHP extension to generate `png` images.
+`png` images are rendered with `imagick` when it is installed, and with GD otherwise. GD draws square modules and square eyes only, without gradient: `style('dot')`, `style('round')`, `eye('circle')` and `gradient()` need `imagick` in `png`, and throw an exception without it. `svg` and `eps` support every option.
 
 ## Migrating from simplesoftwareio/simple-qrcode
 

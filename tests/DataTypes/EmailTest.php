@@ -30,6 +30,16 @@ class EmailTest extends TestCase
         $this->assertEquals($properFormat, strval($this->email));
     }
 
+    public function test_spaces_are_encoded_as_percent_20_not_plus()
+    {
+        // RFC 6068: iOS Mail shows a literal "+" when spaces are encoded as "+".
+        $this->email->create(['foo@bar.com', 'Hello world', 'Line one & two']);
+
+        $properFormat = 'mailto:foo@bar.com?subject=Hello%20world&body=Line%20one%20%26%20two';
+
+        $this->assertEquals($properFormat, strval($this->email));
+    }
+
     public function test_it_generates_the_proper_format_when_an_email_and_subject_are_supplied()
     {
         $this->email->create(['foo@bar.com', 'foo']);

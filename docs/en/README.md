@@ -14,7 +14,7 @@ Coming from `simplesoftwareio/simple-qrcode`: replace it with `jamalofski/simple
 
 Upgrade from v2 or v3 by changing your `composer.json` file to `^4.3`
 
-You **must** install the `imagick` PHP extension if you plan on using the `png` image format.
+`png` images are rendered with `imagick` when it is installed, and with GD otherwise. GD draws square modules and square eyes only, without gradient: `style('dot')`, `style('round')`, `eye('circle')` and `gradient()` need `imagick` in `png`, and throw an exception without it. `svg` and `eps` support every option.
 
 #### v4
 
@@ -99,7 +99,7 @@ Three formats are currently supported; `png,` `eps,` and `svg`.  To change the f
 	QrCode::format('eps');  //Will return a eps image
 	QrCode::format('svg');  //Will return a svg image
 
-> `imagick` is required in order to generate a `png` image.
+> Without `imagick`, `png` is rendered with GD: square modules and square eyes only, without gradient.
 
 #### Size `(int $size)`
 

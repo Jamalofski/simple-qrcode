@@ -35,5 +35,7 @@ in favour of this fork, or transferred.
 The PHP on Jamal's machine has no php.ini. Use a temporary one passed through `PHPRC` that
 loads openssl, curl, fileinfo, gd, mbstring and zip, and run `composer.phar` with that PHP.
 Laravel 11 is out of security support: `composer update --no-security-blocking --with
-"orchestra/testbench:^9.0"` to test it. imagick is not available locally, so the png test is
-skipped there and runs only in the workflow.
+"orchestra/testbench:^9.0"` to test it. imagick is not available locally: the png tests run on GD there
+(`GeneratorWithoutImagick` in tests/PngTest.php forces GD everywhere), and their imagick
+variants run only in the workflow. Every png test decodes the image with
+khanamiryan/qrcode-detector-decoder.

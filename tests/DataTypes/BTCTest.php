@@ -30,6 +30,16 @@ class BTCTest extends TestCase
         $this->assertEquals($properFormat, strval($this->btc));
     }
 
+    public function test_spaces_are_encoded_as_percent_20_not_plus()
+    {
+        // BIP 21 uses RFC 3986 percent-encoding.
+        $this->btc->create(['btcaddress', 0.0034, ['label' => 'My shop', 'message' => 'Order 12']]);
+
+        $properFormat = 'bitcoin:btcaddress?amount=0.0034&label=My%20shop&message=Order%2012';
+
+        $this->assertEquals($properFormat, strval($this->btc));
+    }
+
     public function test_it_generates_a_valid_btc_qrcode_with_an_address_amount_label_message_and_return_address()
     {
         $this->btc->create([
