@@ -6,7 +6,7 @@ use InvalidArgumentException;
 
 /**
  * Merges an image over the center of an svg QrCode, as ImageMerge does for png.
- * The image is embedded as a data URI: png, jpeg, gif, webp or svg.
+ * The image is embedded as a data URI: any raster image PHP recognizes, or svg.
  */
 class SvgImageMerge
 {
@@ -97,20 +97,23 @@ class SvgImageMerge
      */
     protected function describeImage(): array
     {
-        if (preg_match('/^(?:\xEF\xBB\xBF)?\s*(?:<\?xml[^>]*>\s*)?(?:<!--.*?-->\s*)*(?:<!DOCTYPE[^>]*>\s*)?<svg[\s>]/is', $this->image)) {
-            $root = $this->rootTag($this->image);
-            [$width, $height] = $this->viewBoxSize($root) ?? [$this->attribute($root, 'width'), $this->attribute($root, 'height')];
-
-            return ['image/svg+xml', $width && $height ? $width / $height : 1];
-        }
-
+        // A raster image is recognized by its bytes; anything else must hold an <svg> root,
+        // whatever comes before it (xml declaration, comments, a DOCTYPE with entities).
         $info = @getimagesizefromstring($this->image);
 
-        if (! $info || ! in_array($info['mime'], ['image/png', 'image/jpeg', 'image/gif', 'image/webp']) || ! $info[0] || ! $info[1]) {
-            throw new InvalidArgumentException('The image merged with an svg QrCode must be a png, jpeg, gif, webp or svg image.');
+        if ($info && str_starts_with($info['mime'], 'image/')) {
+            return [$info['mime'], $info[0] && $info[1] ? $info[0] / $info[1] : 1];
         }
 
-        return [$info['mime'], $info[0] / $info[1]];
+        $root = $this->rootTag($this->image);
+
+        if ($root === '') {
+            throw new InvalidArgumentException('The image merged with an svg QrCode must be an image: png, jpeg, gif, webp, svg...');
+        }
+
+        [$width, $height] = $this->viewBoxSize($root) ?? [$this->attribute($root, 'width'), $this->attribute($root, 'height')];
+
+        return ['image/svg+xml', $width && $height ? $width / $height : 1];
     }
 
     /**

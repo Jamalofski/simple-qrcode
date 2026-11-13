@@ -224,11 +224,20 @@ class Generator
      */
     public function generate(string $text, ?string $filename = null)
     {
+        if ($this->format === 'webp' && ! function_exists('imagewebp')) {
+            throw new RuntimeException('The webp format needs the GD extension with WebP support.');
+        }
+
         $writer = $this->usesGdForPng()
             ? new Writer($this->getGdRenderer())
             : $this->getWriter($this->getRenderer());
 
-        $qrCode = $writer->writeString($text, $this->encoding, $this->errorCorrection);
+        // A merged logo hides part of the code: at level L, most codes no longer read.
+        // Without an explicit level, it is raised to H. eps ignores the logo.
+        $errorCorrection = $this->errorCorrection
+            ?? ($this->imageMerge !== null && $this->format !== 'eps' ? ErrorCorrectionLevel::H() : null);
+
+        $qrCode = $writer->writeString($text, $this->encoding, $errorCorrection);
 
         if ($this->rendersIntermediatePng()) {
             $qrCode = $this->finishRasterImage($qrCode);
@@ -762,7 +771,7 @@ class Generator
      * @param string|null $style
      * @return EyeInterface|null
      */
-    protected function createEye(?string $style): ?EyeInterface
+    private function createEye(?string $style): ?EyeInterface
     {
         return match ($style) {
             'square' => SquareEye::instance(),
@@ -780,7 +789,7 @@ class Generator
      * @return string
      * @throws InvalidArgumentException
      */
-    protected function validEyeStyle(string $style): string
+    private function validEyeStyle(string $style): string
     {
         if (! in_array($style, ['square', 'circle', 'rounded', 'pointy'])) {
             throw new InvalidArgumentException("\$style must be square, circle, rounded or pointy. {$style} is not a valid eye style.");
@@ -796,7 +805,7 @@ class Generator
      * @return ColorInterface
      * @throws InvalidArgumentException
      */
-    protected function hexToColor(string $hex): ColorInterface
+    private function hexToColor(string $hex): ColorInterface
     {
         $digits = str_starts_with($hex, '#') ? substr($hex, 1) : $hex;
 
@@ -821,7 +830,7 @@ class Generator
      *
      * @return bool
      */
-    protected function rendersIntermediatePng(): bool
+    private function rendersIntermediatePng(): bool
     {
         return $this->format === 'webp' || ($this->format === 'png' && $this->imageMerge !== null);
     }
@@ -834,7 +843,7 @@ class Generator
      * @param int $perLevel The renderer's value for one zlib level
      * @return int
      */
-    protected function pngLevel(int $usual, int $perLevel): int
+    private function pngLevel(int $usual, int $perLevel): int
     {
         if ($this->rendersIntermediatePng()) {
             return $perLevel;
@@ -848,14 +857,9 @@ class Generator
      *
      * @param string $png
      * @return string
-     * @throws RuntimeException when webp is requested and GD has no WebP support
      */
-    protected function finishRasterImage(string $png): string
+    private function finishRasterImage(string $png): string
     {
-        if ($this->format === 'webp' && ! function_exists('imagewebp')) {
-            throw new RuntimeException('The webp format needs the GD extension with WebP support.');
-        }
-
         $image = $this->imageMerge === null
             ? imagecreatefromstring($png)
             : (new ImageMerge(new Image($png), new Image($this->imageMerge)))->mergeImage($this->imagePercentage);

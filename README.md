@@ -47,6 +47,8 @@ QrCode::size(300)->generate('https://example.com');
 
 The full documentation is in [docs/en/README.md](docs/en/README.md).
 
+The package also works without Laravel, in any PHP 8.2 project, Symfony included: see [Usage Outside of Laravel](docs/en/README.md#usage-outside-of-laravel).
+
 ## Examples
 
 ![Example 1](docs/imgs/example-1.png) ![Example 2](docs/imgs/example-2.png)

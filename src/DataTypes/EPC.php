@@ -32,6 +32,16 @@ class EPC implements DataTypeInterface
     protected const MAX_BYTES = 331;
 
     /**
+     * The countries of the European Economic Area, as the first letters of an IBAN.
+     *
+     * @var string[]
+     */
+    protected const EEA_COUNTRIES = [
+        'AT', 'BE', 'BG', 'CY', 'CZ', 'DE', 'DK', 'EE', 'ES', 'FI', 'FR', 'GR', 'HR', 'HU', 'IE',
+        'IS', 'IT', 'LI', 'LT', 'LU', 'LV', 'MT', 'NL', 'NO', 'PL', 'PT', 'RO', 'SE', 'SI', 'SK',
+    ];
+
+    /**
      * The fields of the transfer.
      *
      * @var array
@@ -122,10 +132,10 @@ class EPC implements DataTypeInterface
         }
 
         $name = $this->text($arguments, 'name', 70);
-        $iban = strtoupper(str_replace(' ', '', $this->text($arguments, 'iban', 34)));
-        $bic = strtoupper(str_replace(' ', '', $this->text($arguments, 'bic', 11)));
+        $iban = strtoupper($this->text($arguments, 'iban', 34, true));
+        $bic = strtoupper($this->text($arguments, 'bic', 11, true));
         $purpose = strtoupper($this->text($arguments, 'purpose', 4));
-        $reference = str_replace(' ', '', $this->text($arguments, 'reference', 35));
+        $reference = $this->text($arguments, 'reference', 35, true);
         $text = $this->text($arguments, 'text', 140);
         $information = $this->text($arguments, 'information', 70);
 
@@ -139,6 +149,11 @@ class EPC implements DataTypeInterface
 
         if ($bic !== '' && ! preg_match('/^[A-Z]{6}[A-Z0-9]{2}(?:[A-Z0-9]{3})?$/', $bic)) {
             throw new InvalidArgumentException("{$bic} is not a valid BIC.");
+        }
+
+        // Version 002 makes the BIC optional within the EEA only.
+        if ($bic === '' && ! in_array(substr($iban, 0, 2), self::EEA_COUNTRIES, true)) {
+            throw new InvalidArgumentException('The BIC is required for an IBAN outside the European Economic Area.');
         }
 
         if ($purpose !== '' && ! preg_match('/^[A-Z]{4}$/', $purpose)) {
@@ -187,16 +202,23 @@ class EPC implements DataTypeInterface
 
     /**
      * A text field, trimmed, on one line and not longer than the guidelines allow.
+     * A compact field (IBAN, BIC, reference) loses every space first, non-breaking
+     * ones included, as when it is pasted from a PDF in groups of four.
      *
      * @param array $arguments
      * @param string $key
      * @param int $maxLength
+     * @param bool $compact
      * @return string
      * @throws InvalidArgumentException
      */
-    protected function text(array $arguments, string $key, int $maxLength): string
+    protected function text(array $arguments, string $key, int $maxLength, bool $compact = false): string
     {
         $value = trim((string) ($arguments[$key] ?? ''));
+
+        if ($compact) {
+            $value = preg_replace('/[\s\x{00A0}\x{202F}]+/u', '', $value) ?? $value;
+        }
 
         if (preg_match('/[\r\n]/', $value)) {
             throw new InvalidArgumentException("The {$key} cannot contain a line break.");
@@ -231,7 +253,7 @@ class EPC implements DataTypeInterface
             throw new InvalidArgumentException('The amount must be a number of euros with at most two decimals. '.var_export($amount, true).' is not valid.');
         }
 
-        if ($amount < 0.01 || $amount > 999999999.99) {
+        if (! is_finite($amount) || $amount < 0.01 || $amount > 999999999.99) {
             throw new InvalidArgumentException('The amount must be between 0.01 and 999999999.99 euros.');
         }
 

@@ -295,11 +295,11 @@ The `merge` method merges an image over a QrCode.  This is commonly used to plac
 >The `merge` method works with the `png`, `webp` and `svg` formats; `eps` ignores it.
 >The filepath is relative to app base path if `$absolute` is set to `false`.  Change this variable to `true` to use absolute paths.
 
->In `svg`, the image is embedded in the QrCode as a data URI. It can be a png, jpeg, gif, webp or svg image. Browsers show an svg logo; a few converters, such as old versions of librsvg, leave it out: use a png logo for them.
+>In `svg`, the image is embedded in the QrCode as a data URI. It can be any raster image PHP recognizes (png, jpeg, gif, webp...) or an svg image. Browsers show an svg logo; a few converters, such as old versions of librsvg, leave it out: use a png logo for them.
 
 	QrCode::errorCorrection('H')->merge('path-to-logo.svg', .25)->generate(); // svg QrCode with an svg logo
 
->You should use a high level of error correction when using the `merge` method to ensure that the QrCode is still readable.  We recommend using `errorCorrection('H')`.
+>A logo hides part of the QrCode: at the default error correction, `L`, most codes no longer read behind it. Unless you set a level with `errorCorrection`, the `merge` method raises it to `H`, the highest.
 
 ![Merged Logo](../imgs/merged-qrcode.png)
 
@@ -313,7 +313,7 @@ The `mergeString` method can be used to achieve the same as the `merge` call, ex
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
 	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
 
->As with the normal `merge` call, it works with `png`, `webp` and `svg`. The same applies for error correction, high levels are recommened.
+>As with the normal `merge` call, it works with `png`, `webp` and `svg`, and raises the error correction to `H` unless you set one.
 
 #### Advance Usage
 
@@ -356,7 +356,7 @@ This helper makes the EPC QR code of a SEPA credit transfer, also known as GiroC
 	QrCode::EPC([
 		'name' => 'Red Cross of Belgium',  // Beneficiary, required, 70 characters at most
 		'iban' => 'BE72 0000 0000 1616',   // Required; spaces are removed and the checksum is checked
-		'bic' => 'BPOTBEB1',               // Optional within the EEA
+		'bic' => 'BPOTBEB1',               // Optional within the EEA, required for an IBAN outside it
 		'amount' => 10.50,                 // Optional, in euros, from 0.01 to 999999999.99
 		'purpose' => 'CHAR',               // Optional purpose code, four letters
 		'text' => 'Donation',              // Optional remittance text, 140 characters at most
@@ -466,9 +466,34 @@ You can use a prefix found in the table below inside the `generate` section to c
 <a id="docs-outside-laravel"></a>
 ## Usage Outside of Laravel
 
-You may use this package outside of Laravel by instantiating a new `Generator` class.
+You may use this package outside of Laravel by instantiating a new `Generator` class. It needs no Laravel package: `generate` then returns a plain string.
 
 	use SimpleSoftwareIO\QrCode\Generator;
 
 	$qrcode = new Generator;
 	$qrcode->size(500)->generate('Make a qrcode without Laravel!');
+
+A `Generator` keeps its settings from one QrCode to the next: create a new one for each QrCode. The Laravel facade does it for you.
+
+#### Symfony
+
+Declare the `Generator` as a service that is not shared, so each injection gets a new one. A shared service would keep the format, colors and logo of the previous QrCode, within a request and, with a worker runtime such as FrankenPHP, from one request to the next.
+
+	# config/services.yaml
+	services:
+	    SimpleSoftwareIO\QrCode\Generator:
+	        shared: false
+
+Then inject it, in a controller for instance:
+
+	use SimpleSoftwareIO\QrCode\Generator;
+	use Symfony\Component\HttpFoundation\Response;
+	use Symfony\Component\Routing\Attribute\Route;
+
+	#[Route('/qrcode.svg')]
+	public function qrCode(Generator $qrCode): Response
+	{
+	    return new Response($qrCode->size(200)->generate('https://example.com'), 200, ['Content-Type' => 'image/svg+xml']);
+	}
+
+In Twig, print an `svg` QrCode with the `raw` filter. For a `png`, encode it with `base64_encode` before passing it to the template, and use it in a `data:image/png;base64,` URI.

@@ -80,6 +80,23 @@ class PngTest extends TestCase
     }
 
     #[DataProvider('renderers')]
+    public function test_a_merged_logo_decodes_without_setting_the_error_correction(string $class)
+    {
+        foreach (['https://example.com', 'Hello world, this is a QR code with a logo.'] as $text) {
+            foreach (['png', 'webp'] as $format) {
+                $image = (string) $this->generator($class)
+                    ->format($format)
+                    ->size(400)
+                    ->margin(2)
+                    ->merge(__DIR__.'/Images/simplesoftware-icon-grey-blue.png', .3, true)
+                    ->generate($text);
+
+                $this->assertSame($text, $this->decode($image), "{$format}: {$text}");
+            }
+        }
+    }
+
+    #[DataProvider('renderers')]
     public function test_a_transparent_background_stays_transparent_with_a_merged_logo(string $class)
     {
         $png = (string) $this->generator($class)

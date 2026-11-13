@@ -58,6 +58,28 @@ class EPCTest extends TestCase
         );
     }
 
+    public function test_an_iban_pasted_in_groups_with_any_kind_of_space_is_accepted()
+    {
+        // Malta: 31 characters, 38 in groups of four. U+00A0 and U+202F come from PDFs and web pages.
+        foreach (['MT84 MALT 0110 0001 2345 MTLC AST0 01S', "MT84\u{00A0}MALT\u{00A0}0110\u{00A0}0001\u{202F}2345\tMTLC AST0 01S"] as $iban) {
+            $lines = explode("\n", (string) $this->epc(['iban' => $iban, 'bic' => 'MALTMTMT'] + self::TRANSFER));
+
+            $this->assertSame('MT84MALT011000012345MTLCAST001S', $lines[6]);
+        }
+    }
+
+    public function test_the_bic_is_required_outside_the_european_economic_area()
+    {
+        $swiss = ['iban' => 'CH93 0076 2011 6238 5295 7', 'bic' => ''] + self::TRANSFER;
+
+        $lines = explode("\n", (string) $this->epc(['bic' => 'UBSWCHZH80A'] + $swiss));
+        $this->assertSame('UBSWCHZH80A', $lines[4]);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('BIC is required for an IBAN outside the European Economic Area');
+        $this->epc($swiss);
+    }
+
     public static function amounts(): array
     {
         return [
@@ -86,6 +108,8 @@ class EPCTest extends TestCase
             'bad BIC' => [['bic' => 'BPO'], 'not a valid BIC'],
             'amount too small' => [['amount' => 0], 'between 0.01 and 999999999.99'],
             'amount too large' => [['amount' => '1000000000'], 'between 0.01 and 999999999.99'],
+            'amount not a number' => [['amount' => NAN], 'between 0.01 and 999999999.99'],
+            'infinite amount' => [['amount' => INF], 'between 0.01 and 999999999.99'],
             'three decimals in a string' => [['amount' => '1.005'], 'at most two decimals'],
             'negative amount' => [['amount' => '-5'], 'at most two decimals'],
             'purpose of 3 letters' => [['purpose' => 'ABC'], 'four letters'],
