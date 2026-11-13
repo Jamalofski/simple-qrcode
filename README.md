@@ -1,41 +1,74 @@
 Simple QrCode
-========================
+=============
 
-![Unit Tests](https://github.com/SimpleSoftwareIO/simple-qrcode/workflows/Unit%20Tests/badge.svg)
-[![Latest Stable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/stable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
-[![Latest Unstable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/unstable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
-[![License](https://poser.pugx.org/simplesoftwareio/simple-qrcode/license.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
-[![Total Downloads](https://poser.pugx.org/simplesoftwareio/simple-qrcode/downloads.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
+A maintained fork of [simplesoftwareio/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode), the QR code generator for Laravel built on [Bacon/BaconQrCode](https://github.com/Bacon/BaconQrCode).
 
-## [Deutsch](https://www.simplesoftware.io/#/docs/simple-qrcode/de) | [Español](https://www.simplesoftware.io/#/docs/simple-qrcode/es) | [Français](https://www.simplesoftware.io/#/docs/simple-qrcode/fr) | [Italiano](https://www.simplesoftware.io/#/docs/simple-qrcode/it) | [Português](https://www.simplesoftware.io/#/docs/simple-qrcode/pt-br) | [Русский](https://www.simplesoftware.io/#/docs/simple-qrcode/ru) | [日本語](https://www.simplesoftware.io/#/docs/simple-qrcode/ja) | [한국어](https://www.simplesoftware.io/#/docs/simple-qrcode/kr) | [हिंदी](https://www.simplesoftware.io/#/docs/simple-qrcode/hi) | [简体中文](https://www.simplesoftware.io/#/docs/simple-qrcode/zh-cn) | [العربية](https://www.simplesoftware.io/#/docs/simple-qrcode/ar)
+The original package has had no release since 4.2.0 (February 2021). It requires `bacon/bacon-qr-code` ^2, while `laravel/fortify` requires ^3, so it can no longer be installed next to the official Laravel starter kits. This fork is a drop-in replacement:
 
-Language files are currently out of date.  We need volunteers to upgrade them to v4!  Please submit a PR request!
+- same namespace (`SimpleSoftwareIO\QrCode`), same `QrCode` facade, same API: no code change;
+- `bacon/bacon-qr-code` ^3, PHP 8.2 to 8.5, Laravel 11 to 13;
+- declares `replace` for `simplesoftwareio/simple-qrcode`, so packages that depend on the original name keep working;
+- version numbers continue from the original: 4.3.0 is the first release of the fork.
 
-## Introduction
-Simple QrCode is an easy to use wrapper for the popular Laravel framework based on the great work provided by [Bacon/BaconQrCode](https://github.com/Bacon/BaconQrCode).  We created an interface that is familiar and easy to install for Laravel users.
+## Installation
 
-## Official Documentation
+```bash
+composer require jamalofski/simple-qrcode
+```
 
-Documentation for Simple QrCode can be found on our [website.](http://www.simplesoftware.io/#/docs/simple-qrcode)
+Laravel discovers the service provider and the `QrCode` alias automatically.
+
+You must install the `imagick` PHP extension to generate `png` images.
+
+## Migrating from simplesoftwareio/simple-qrcode
+
+Swap the package in `composer.json`, nothing else:
+
+```bash
+composer remove simplesoftwareio/simple-qrcode --no-update
+composer require jamalofski/simple-qrcode
+```
+
+The two packages cannot be installed together: Composer treats the fork as the original.
+
+## Usage
+
+```php
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
+QrCode::size(300)->generate('https://example.com');
+```
+
+```blade
+{!! QrCode::size(200)->generate(Request::url()) !!}
+```
+
+The full documentation is in [docs/en/README.md](docs/en/README.md).
 
 ## Examples
 
 ![Example 1](docs/imgs/example-1.png) ![Example 2](docs/imgs/example-2.png)
 
-## Use Cases
-<p align="center">
-  <a href="https://www.rsvpify.com">
-  	<img width="300" src="https://rsvpify.com/wp-content/uploads/2017/03/rsvpify-logo-header-rsvp.png">
-  </a>
-</p>
-<p align="center">
-  <a href="https://rsvpify.com/sell-tickets">Platform to sell tickets online</a>
-</p>
+## Translations
+
+[Deutsch](docs/de/README.md) | [Español](docs/es/README.md) | [Français](docs/fr/README.md) | [Italiano](docs/it/README.md) | [Português](docs/pt-br/README.md) | [Русский](docs/ru/README.md) | [日本語](docs/ja/README.md) | [한국어](docs/kr/README.md) | [हिंदी](docs/hi/README.md) | [简体中文](docs/zh-cn/README.md) | [العربية](docs/ar/README.md)
+
+The translations predate version 4 and some sections are out of date. The English documentation is the reference.
+
+## Upgrading from 4.2
+
+- PHP 8.2 or later is required.
+- `bacon/bacon-qr-code` ^3 replaces ^2. If you use BaconQrCode classes directly, check its [changelog](https://github.com/Bacon/BaconQrCode/blob/main/CHANGELOG.md).
+- The SVG output keeps the same shapes; some path segments are written in a different order, which matters only if you compare raw SVG strings.
 
 ## Contributing
 
-Please submit all issues and pull requests to the [simplesoftwareio/simple-qrcode](https://github.com/simplesoftwareio/simple-qrcode) repository on the develop branch!
+Issues and pull requests are welcome on [jamalofski/simple-qrcode](https://github.com/jamalofski/simple-qrcode).
+
+## Credits
+
+Simple QrCode was created by Simple Software LLC and its contributors. This fork keeps their history and their MIT license.
 
 ## License
 
-This software is released under the [MIT license.](https://opensource.org/licenses/MIT)
+MIT. See [LICENSE](LICENSE).

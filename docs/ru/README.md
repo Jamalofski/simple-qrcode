@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode.svg?branch=master)](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode) [![Latest Stable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/stable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Latest Unstable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/unstable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![License](https://poser.pugx.org/simplesoftwareio/simple-qrcode/license.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Total Downloads](https://poser.pugx.org/simplesoftwareio/simple-qrcode/downloads.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
 
 
 - [Введение](#docs-introduction)
@@ -30,14 +29,14 @@ Simple QrCode - простая в использовании обёртка дл
 Находясь в директории вашего проекта laravel, выполните команду:
 
 ```bash
-composer require simplesoftwareio/simple-qrcode
+composer require jamalofski/simple-qrcode
 ```
 
-Либо добавьте пакет `simplesoftwareio/simple-qrcode` в раздел `require` файла `composer.json`:
+Либо добавьте пакет `jamalofski/simple-qrcode` в раздел `require` файла `composer.json`:
 
 ```json
 "require": {
-    "simplesoftwareio/simple-qrcode": "~2"
+    "jamalofski/simple-qrcode": "^4.3"
 }
 ```
 
@@ -271,7 +270,7 @@ QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->g
 > Вы должны использовать высокий уровень коррекции ошибок при использовании метода `merge()` чтобы QR-код остался читаемым. 
 > Рекомендуется использовать `errorCorrection('H')`.
 
-![Merged Logo](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/merged-qrcode.png?raw=true)
+![Merged Logo](../imgs/merged-qrcode.png)
 
 ### Наложение изображений на QR-код (из двоичной строки)
 
@@ -408,20 +407,20 @@ QrCode::wiFi([
 Составьте строку по образцу, как в таблице ниже, и передайте её в метод `generate()`, чтобы добиться того же эффекта, как при использовании хелперов:
 
 ```php
-QrCode::generate('http://www.simplesoftware.io');
+QrCode::generate('http://www.example.com');
 ```
 
 | Применение | Префикс | Пример |
 | --- | --- | --- |
-| Ссылка на сайт | http:// | http://www.simplesoftware.io |
-| Безопасная ссылка | https:// | https://www.simplesoftware.io |
-| Email | mailto: | mailto:support@simplesoftware.io |
+| Ссылка на сайт | http:// | http://www.example.com |
+| Безопасная ссылка | https:// | https://www.example.com |
+| Email | mailto: | mailto:support@example.com |
 | Телефон для звонка | tel: | tel:555-555-5555 |
 | СМС | sms: | sms:555-555-5555 |
 | СМС с текстом сообщения | sms: | sms::Какое-то сообщение |
 | СМС с текстом сообщения и номером адресата | sms: | sms:555-555-5555:Какое-то сообщение |
 | Местоположение на карте | geo: | geo:-78.400364,-85.916993 |
-| Визитка (MeCard) | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@simplesoftware.io; |
+| Визитка (MeCard) | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@example.com; |
 | Контакт (VCard) | BEGIN:VCARD | [Примеры](https://ru.wikipedia.org/wiki/VCard) |
 | Wifi | wifi: | wifi:WEP/WPA;SSID;PSK;Hidden(True/False) |
 

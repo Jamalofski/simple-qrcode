@@ -1,3 +1,3 @@
 # Contribution Guidelines
 
-Please submit all issues and pull requests to the [simplesoftwareio/simple-qrcode](https://github.com/simplesoftwareio/simple-qrcode) repository on the develop branch!
+Please submit issues and pull requests to [jamalofski/simple-qrcode](https://github.com/jamalofski/simple-qrcode), against the `main` branch. Run `composer test` before opening a pull request.

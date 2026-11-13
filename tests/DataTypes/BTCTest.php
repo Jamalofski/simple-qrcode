@@ -5,6 +5,8 @@ use SimpleSoftwareIO\QrCode\DataTypes\BTC;
 
 class BTCTest extends TestCase
 {
+    protected $btc;
+
     public function setUp(): void
     {
         $this->btc = new BTC();

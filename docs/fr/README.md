@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode.svg?branch=master)](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode) [![Latest Stable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/stable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Latest Unstable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/unstable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![License](https://poser.pugx.org/simplesoftwareio/simple-qrcode/license.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Total Downloads](https://poser.pugx.org/simplesoftwareio/simple-qrcode/downloads.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
 
 - [Introduction](#docs-introduction)
 - [Traductions](#docs-translations)
@@ -25,7 +24,7 @@ Nous recherchons des utilisateurs parlant arabe, espagnol, français, coréen ou
 Commencez par ajouter le paquet QrCode à la section `require` de votre fichier `composer.json`: 
 
 	"require": {
-		"simplesoftwareio/simple-qrcode": "~2"
+		"jamalofski/simple-qrcode": "^4.3"
 	}
 
 Lancez ensuite la commande `composer update`.
@@ -198,7 +197,7 @@ La méthode `merge` fusionne une image sur un QrCode. C'est une pratique courant
 
 > Vous devriez utiliser un haut niveau de correction d'erreur avec la méthode `merge` pour assurer la bonne lecture du QrCode. Nous recommandons l'utilisation de `errorCorrection('H')`.
 
-![Fusion de Logo](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/merged-qrcode.png?raw=true)
+![Fusion de Logo](../imgs/merged-qrcode.png)
 
 #### Fusion De Chaîne Binaire
 
@@ -312,20 +311,20 @@ Cet helper génère un QrCode qui permet la connexion à un réseau WiFi.
 
 Vous pouvez utiliser un des pseudos-protocoles du tableau suivant comme paramètre de la méthode `generate` pour créer un QrCode contenant des informations avancées :
 
-	QrCode::generate('http://www.simplesoftware.io');
+	QrCode::generate('http://www.example.com');
 
 
 | Usage | Protocole | Exemple |
 | --- | --- | --- |
-| URL de site internet | http:// | http://www.simplesoftware.io |
-| URL de site internet sécurisé | https:// | https://www.simplesoftware.io |
-| Adresse de courriel | mailto: | mailto:support@simplesoftware.io |
+| URL de site internet | http:// | http://www.example.com |
+| URL de site internet sécurisé | https:// | https://www.example.com |
+| Adresse de courriel | mailto: | mailto:support@example.com |
 | Numéro de téléphone | tel: | tel:555-555-5555 |
 | SMS | sms: | sms:555-555-5555 |
 | SMS avec message pré-défini | sms: | sms::I am a pretyped message |
 | SMS avec message et numéro de téléphone pré-définis | sms: | sms:555-555-5555:I am a pretyped message |
 | Coordonnées géographiques | geo: | geo:-78.400364,-85.916993 |
-| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@simplesoftware.io; |
+| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@example.com; |
 | VCard | BEGIN:VCARD | [Voir les exemples](https://fr.wikipedia.org/wiki/Code_QR#Correction_d.27erreur) |
 | Wifi | wifi: | wifi:WEP/WPA;SSID;PSK;Hidden(True/False) |
 

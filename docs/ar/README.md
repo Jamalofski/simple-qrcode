@@ -1,7 +1,6 @@
 
-[![Build Status](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode.svg?branch=master)](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode) [![Latest Stable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/stable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Latest Unstable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/unstable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![License](https://poser.pugx.org/simplesoftwareio/simple-qrcode/license.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Total Downloads](https://poser.pugx.org/simplesoftwareio/simple-qrcode/downloads.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
 
-#### [Deutsch](http://www.simplesoftware.io/#/docs/simple-qrcode/de) | [Español](http://www.simplesoftware.io/#/docs/simple-qrcode/es) | [Français](http://www.simplesoftware.io/#/docs/simple-qrcode/fr) | [Italiano](http://www.simplesoftware.io/#/docs/simple-qrcode/it) | [Português](http://www.simplesoftware.io/#/docs/simple-qrcode/pt-br) | [Русский](http://www.simplesoftware.io/#/docs/simple-qrcode/ru) | [日本語](http://www.simplesoftware.io/#/docs/simple-qrcode/ja) | [한국어](http://www.simplesoftware.io/#/docs/simple-qrcode/kr) | [हिंदी](http://www.simplesoftware.io/#/docs/simple-qrcode/hi) | [简体中文](http://www.simplesoftware.io/#/docs/simple-qrcode/zh-cn) | [العربية](https://www.simplesoftware.io/#/docs/simple-qrcode/ar)
+#### [Deutsch](../de/README.md) | [Español](../es/README.md) | [Français](../fr/README.md) | [Italiano](../it/README.md) | [Português](../pt-br/README.md) | [Русский](../ru/README.md) | [日本語](../ja/README.md) | [한국어](../kr/README.md) | [हिंदी](../hi/README.md) | [简体中文](../zh-cn/README.md) | [العربية](../ar/README.md)
 
 <div dir="rtl">
 
@@ -9,7 +8,7 @@
 ## المقدمة
 Simple QrCode هو غلاف سهل الاستخدام لإطار عمل Laravel الشهير استنادًا إلى العمل الرائع الذي يقدمه [Bacon/BaconQrCode](https://github.com/Bacon/BaconQrCode).  أنشأنا واجهة مألوفة و سهلة التثبيت لمستخدمي لارافل
 
-![المثال 1](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/example-1.png?raw=true) ![المثال 2](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/example-2.png?raw=true)
+![المثال 1](../imgs/example-1.png) ![المثال 2](../imgs/example-2.png)
 
 <a id="docs-upgrade"></a>
 ## دليل الترقية
@@ -40,7 +39,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 #### Composer
 
-قم بتشغيل `composer require simplesoftwareio/simple-qrcode "~4"` لإضافة الحزمة. 
+قم بتشغيل `composer require jamalofski/simple-qrcode "^4.3"` لإضافة الحزمة. 
 
 لارافل ستقوم تلقائيا بتنصيب الحزمة.
 
@@ -97,7 +96,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 هذا سيحول الكود إلى QrCode يحمل العبارة التالية:  "Make me into a QrCode!"
 
-![Example QrCode](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/make-me-into-a-qrcode.png?raw=true)
+![Example QrCode](../imgs/make-me-into-a-qrcode.png)
 
 #### Generate `(string $data, string $filename = null)`
 
@@ -149,7 +148,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 </div>
 
-![200 Pixels](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/200-pixels.png?raw=true) ![250 Pixels](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/250-pixels.png?raw=true) 
+![200 Pixels](../imgs/200-pixels.png) ![250 Pixels](../imgs/250-pixels.png) 
 
 #### Color `(int $red, int $green, int $blue, int $alpha = null)`
 
@@ -164,7 +163,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 </div>
 
-![Red QrCode](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-qrcode.png?raw=true) ![Red Transparent QrCode](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-25-transparent.png?raw=true)
+![Red QrCode](../imgs/red-qrcode.png) ![Red Transparent QrCode](../imgs/red-25-transparent.png)
 
 #### Background Color `(int $red, int $green, int $blue, int $alpha = null)`
 
@@ -177,7 +176,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 </div>
 
-![Red Background QrCode](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-background.png?raw=true) ![Red Transparent Background QrCode](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-25-transparent-background.png?raw=true)
+![Red Background QrCode](../imgs/red-background.png) ![Red Transparent Background QrCode](../imgs/red-25-transparent-background.png)
 
 #### Gradient `$startRed, $startGreen, $startBlue, $endRed, $endGreen, $endBlue, string $type)`
 
@@ -187,11 +186,11 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 | النوع | مثال |
 | --- | --- |
-| `vertical` | ![Veritcal](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/vertical.png?raw=true) |
-| `horizontal` | ![Horizontal](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/horizontal.png?raw=true) |
-| `diagonal` | ![Diagonal](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/diagonal.png?raw=true) |
-| `inverse_diagonal` | ![Invrse Diagonal](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/inverse_diagonal.png?raw=true) |
-| `radial` | ![Radial](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/radial.png?raw=true) |
+| `vertical` | ![Veritcal](../imgs/vertical.png) |
+| `horizontal` | ![Horizontal](../imgs/horizontal.png) |
+| `diagonal` | ![Diagonal](../imgs/diagonal.png) |
+| `inverse_diagonal` | ![Invrse Diagonal](../imgs/inverse_diagonal.png) |
+| `radial` | ![Radial](../imgs/radial.png) |
 
 #### EyeColor `(int $eyeNumber, int $innerRed, int $innerGreen, int $innerBlue, int $outterRed = 0, int $outterGreen = 0, int $outterBlue = 0)`
 
@@ -205,9 +204,9 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 | رقم العين | مثال |
 | --- | --- |
-| `0` | ![Eye 0](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/eye-0.png?raw=true) |
-| `1` | ![Eye 1](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/eye-1.png?raw=true)|
-| `2` | ![Eye  2](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/eye-2.png?raw=true) |
+| `0` | ![Eye 0](../imgs/eye-0.png) |
+| `1` | ![Eye 1](../imgs/eye-1.png)|
+| `2` | ![Eye  2](../imgs/eye-2.png) |
 
 
 #### Style `(string $style, float $size = 0.5)`
@@ -227,9 +226,9 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 | التنسيق | مثال |
 | --- | --- |
-| `square` | ![Square](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/200-pixels.png?raw=true) |
-| `dot` | ![Dot](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/dot.png)|
-| `round` | ![Round](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/round.png?raw=true) |
+| `square` | ![Square](../imgs/200-pixels.png) |
+| `dot` | ![Dot](../imgs/dot.png)|
+| `round` | ![Round](../imgs/round.png) |
 
 #### Eye Style `(string $style)`
 
@@ -239,8 +238,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 | Style | Example |
 | --- | --- |
-| `square` | ![Square](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/200-pixels.png?raw=true) |
-| `circle` | ![Circle](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/circle-eye.png?raw=true)|
+| `square` | ![Square](../imgs/200-pixels.png) |
+| `circle` | ![Circle](../imgs/circle-eye.png)|
 
 #### Margin `(int $margin)`
 
@@ -338,7 +337,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 > يجب عليك استعمال نسبة الإرتفاع ل تصحيح الخطأ عندما تستعمل دالة `merge` للتأكد أن ال Qrcode باقي سهل القراءة. نوصي باستخدام `errorCorrection('H')`.
 
-![Merged Logo](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/merged-qrcode.png?raw=true)
+![Merged Logo](../imgs/merged-qrcode.png)
 
 #### Merge Binary String `(string $content, float $percentage = .2)`
 
@@ -506,21 +505,21 @@ This helper generates a scannable bitcoin to send payments.  [More information](
 
 <div dir="ltr">
 
-	QrCode::generate('http://www.simplesoftware.io');
+	QrCode::generate('http://www.example.com');
 
 </div>
 
 | الإستعمال | الإختصار | مثال |
 | --- | --- | --- |
-| رابط موقع إلكتروني | http:// | http://www.simplesoftware.io |
-| عنوان URL آخمن | https:// | https://www.simplesoftware.io |
-| بريد إلكتروني | mailto: | mailto:support@simplesoftware.io |
+| رابط موقع إلكتروني | http:// | http://www.example.com |
+| عنوان URL آخمن | https:// | https://www.example.com |
+| بريد إلكتروني | mailto: | mailto:support@example.com |
 | رقم هاتف | tel: | tel:555-555-5555 |
 | رسالة نصية (SMS) | sms: | sms:555-555-5555 |
 | رسالة نصية (SMS) مع رسالة مكتوبة مسبقًا | sms: | sms::I am a pretyped message |
 | رسالة نصية (SMS) مع رسالة ورقم مكتوب مسبقًا | sms: | sms:555-555-5555:I am a pretyped message |
 | العنوان الجغرافي | geo: | geo:-78.400364,-85.916993 |
-| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@simplesoftware.io; |
+| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@example.com; |
 | VCard | BEGIN:VCARD | [See Examples](https://en.wikipedia.org/wiki/VCard) |
 | الوايفاي | wifi: | wifi:WEP/WPA;SSID;PSK;Hidden(True/False) |
 

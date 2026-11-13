@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode.svg?branch=master)](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode) [![Latest Stable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/stable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Latest Unstable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/unstable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![License](https://poser.pugx.org/simplesoftwareio/simple-qrcode/license.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Total Downloads](https://poser.pugx.org/simplesoftwareio/simple-qrcode/downloads.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
 
 
 - [Introdução](#docs-introduction)
@@ -26,7 +25,7 @@ Simple QrCode é um pacote de fácil uso do Framework Laravel, baseado no grande
 Primeiramente, adicione o pacote Simple QrCode ao seu `require` no arquivo `composer.json`:
 
 	"require": {
-		"simplesoftwareio/simple-qrcode": "~2"
+		"jamalofski/simple-qrcode": "^4.3"
 	}
 
 Em seguida, execute o comando `composer update`.
@@ -199,7 +198,7 @@ O método `merge` mescla uma imagem sobre um Qrcode. É comumente usado para se 
 
 >Você deve usar um alto nível de correção de erros quando usado o método `merge`, para garantir que o QrCode será legível. Recomendamos usar `errorCorrection('H')`.
 
-![Merged Logo](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/merged-qrcode.png?raw=true)
+![Merged Logo](../imgs/merged-qrcode.png)
 
 #### Funda string binária
 
@@ -313,20 +312,20 @@ Esse ajudante, faz com que QrCodes escaneáveis permitam o aparelho celular se c
 
 Você pode usar um prefixo listado na tabela abaixo dentro da seção `generate` para criar um QrCode para armazenar informações mais avançadas:
 
-	QrCode::generate('http://www.simplesoftware.io');
+	QrCode::generate('http://www.example.com');
 
 
 | Uso | Prefixo | Exemplo |
 | --- | --- | --- |
-| URL do site | http:// | http://www.simplesoftware.io |
-| URL segura | https:// | https://www.simplesoftware.io |
-| Endereço de e-mail | mailto: | mailto:support@simplesoftware.io |
+| URL do site | http:// | http://www.example.com |
+| URL segura | https:// | https://www.example.com |
+| Endereço de e-mail | mailto: | mailto:support@example.com |
 | Número de telefone | tel: | tel:555-555-5555 |
 | Texto (SMS) | sms: | sms:555-555-5555 |
 | Texto (SMS) With Pretyped Message | sms: | sms::I am a pretyped message |
 | Texto (SMS) With Pretyped Message and Number | sms: | sms:555-555-5555:I am a pretyped message |
 | Coordenadas | geo: | geo:-78.400364,-85.916993 |
-| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@simplesoftware.io; |
+| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@example.com; |
 | VCard | BEGIN:VCARD | [Veja Exemplos](https://en.wikipedia.org/wiki/VCard) |
 | Wifi | wifi: | wifi:WEP/WPA;SSID;PSK;Hidden(True/False) |
 

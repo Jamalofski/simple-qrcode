@@ -1,23 +1,44 @@
 {
-    "name": "simplesoftwareio/simple-qrcode",
-    "description": "Simple QrCode is a QR code generator made for Laravel.",
-    "keywords": ["qrcode", "laravel", "simple", "generator", "wrapper"],
-    "homepage": "https://www.simplesoftware.io/#/docs/simple-qrcode",
-    "license" : "MIT",
+    "name": "jamalofski/simple-qrcode",
+    "description": "Simple QrCode is a QR code generator made for Laravel. Maintained drop-in replacement for simplesoftwareio/simple-qrcode.",
+    "keywords": [
+        "qrcode",
+        "qr-code",
+        "laravel",
+        "simple",
+        "generator",
+        "wrapper",
+        "bacon"
+    ],
+    "homepage": "https://github.com/jamalofski/simple-qrcode",
+    "license": "MIT",
     "authors": [
         {
             "name": "Simple Software LLC",
-            "email": "support@simplesoftware.io"
+            "role": "Original author"
+        },
+        {
+            "name": "Jamal Tantaoui",
+            "homepage": "https://github.com/jamalofski",
+            "role": "Maintainer"
         }
     ],
+    "support": {
+        "issues": "https://github.com/jamalofski/simple-qrcode/issues",
+        "source": "https://github.com/jamalofski/simple-qrcode"
+    },
     "require": {
-        "php": ">=7.2|^8.0",
-      	"ext-gd": "*",
-        "bacon/bacon-qr-code": "^2.0"
+        "php": "^8.2",
+        "ext-gd": "*",
+        "bacon/bacon-qr-code": "^3.0"
     },
     "require-dev": {
-        "mockery/mockery": "~1",
-        "phpunit/phpunit": "~9"
+        "mockery/mockery": "^1.6",
+        "orchestra/testbench": "^9.0|^10.0|^11.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "replace": {
+        "simplesoftwareio/simple-qrcode": "self.version"
     },
     "suggest": {
         "ext-imagick": "Allows the generation of PNG QrCodes.",
@@ -32,6 +53,9 @@
         "test": "phpunit"
     },
     "extra": {
+        "branch-alias": {
+            "dev-main": "4.3.x-dev"
+        },
         "laravel": {
             "providers": [
                 "SimpleSoftwareIO\\QrCode\\QrCodeServiceProvider"
@@ -40,5 +64,8 @@
                 "QrCode": "SimpleSoftwareIO\\QrCode\\Facades\\QrCode"
             }
         }
+    },
+    "config": {
+        "sort-packages": true
     }
 }

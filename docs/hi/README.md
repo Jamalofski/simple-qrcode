@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode.svg?branch=master)](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode) [![Latest Stable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/stable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Latest Unstable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/unstable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![License](https://poser.pugx.org/simplesoftwareio/simple-qrcode/license.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Total Downloads](https://poser.pugx.org/simplesoftwareio/simple-qrcode/downloads.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
 
 
 - [परिचय](#docs-introduction)
@@ -26,7 +25,7 @@
 सर्वप्रथं composer.json मे qrcode पॅकेज को अपने require से जोड़ें:
 
 	"require": {
-		"simplesoftwareio/simple-qrcode": "~2"
+		"jamalofski/simple-qrcode": "^4.3"
 	}
 
 फिर composer update कमॅंड चलाएँ।
@@ -198,7 +197,7 @@ Generate QrCode बनाने के काम आता है।
 
 >आपको `merge` विधि का इस्तेमाल करते समय उच्च स्तर के त्रुटि सुधार का उपयोग करना चाहिए।  सुझाव है कि `errorCorrection('H')` का उपयोग करें।
 
-![Merged Logo](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/merged-qrcode.png?raw=true)
+![Merged Logo](../imgs/merged-qrcode.png)
 
 #### Merge Binary String(द्विआधारी स्ट्रिंग का विलय)
 
@@ -312,20 +311,20 @@ Generate QrCode बनाने के काम आता है।
 
 आप निम्न तालिका मे से `generate` अनुभाग मे पाए गये उपसर्ग का उपयोग करके और अधिक उन्नत जानकारी स्टोर करने के लिए QrCode का निर्माण कर सकते हैं:
 
-	QrCode::generate('http://www.simplesoftware.io');
+	QrCode::generate('http://www.example.com');
 
 
 | प्रयोग | उपसर्ग | उदाहरण |
 | --- | --- | --- |
-| Website URL | http:// | http://www.simplesoftware.io |
-| Secured URL | https:// | https://www.simplesoftware.io |
-| E-mail Address | mailto: | mailto:support@simplesoftware.io |
+| Website URL | http:// | http://www.example.com |
+| Secured URL | https:// | https://www.example.com |
+| E-mail Address | mailto: | mailto:support@example.com |
 | Phone Number | tel: | tel:555-555-5555 |
 | Text (SMS) | sms: | sms:555-555-5555 |
 | Text (SMS) With Pretyped Message | sms: | sms::I am a pretyped message |
 | Text (SMS) With Pretyped Message and Number | sms: | sms:555-555-5555:I am a pretyped message |
 | Geo Address | geo: | geo:-78.400364,-85.916993 |
-| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@simplesoftware.io; |
+| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@example.com; |
 | VCard | BEGIN:VCARD | [See Examples](https://en.wikipedia.org/wiki/VCard) |
 | Wifi | wifi: | wifi:WEP/WPA;SSID;PSK;Hidden(True/False) |
 

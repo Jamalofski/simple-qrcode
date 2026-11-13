@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode.svg?branch=master)](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode) [![Latest Stable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/stable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Latest Unstable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/unstable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![License](https://poser.pugx.org/simplesoftwareio/simple-qrcode/license.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Total Downloads](https://poser.pugx.org/simplesoftwareio/simple-qrcode/downloads.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
 
 - [소개(Introduction)](#docs-introduction)
 - [번역(Translations)](#docs-translations)
@@ -25,7 +24,7 @@ Simple QrCode는 인기가 많은 라라벨 프레임워크 상에서 쉽게 사
 우선, Simple QrCode 패키지를 `composer.json` 파일의 `require`에 추가해주세요:
 
 	"require": {
-		"simplesoftwareio/simple-qrcode": "~2"
+		"jamalofski/simple-qrcode": "^4.3"
 	}
 
 그 다음으로, `composer update` 명령을 실행해주세요.
@@ -200,7 +199,7 @@ Qr코드를 만들기 위한 문자 인코딩을 변경할 수 있습니다. 기
 
 >`merge`를 사용하면서 Qr리더가 잘 스캔하게 하기 위해서는 높은 오류 복원율을 사용해야합니다. `errorCorrection('H')`를 사용하기를 권장합니다.
 
-![Merged Logo](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/merged-qrcode.png?raw=true)
+![Merged Logo](../imgs/merged-qrcode.png)
 
 #### 이진 문자열 병합(Merge Binary String)
 
@@ -330,20 +329,20 @@ PNG 이미지를 `base64_encode`를 사용하여 인코딩된 raw string을 사�
 
 아래 표에 있는 접두사(prefix)를 `generate` 섹션에 사용하면, 더 고급스러운 정보가 저장된 Qr코드를 만들 수 있습니다:
 
-	QrCode::generate('http://www.simplesoftware.io');
+	QrCode::generate('http://www.example.com');
 
 
 | 사용처 | Prefix | 예시 |
 | --- | --- | --- |
-| 웹사이트(http) URL | http:// | http://www.simplesoftware.io |
-| 웹사이트(https) URL | https:// | https://www.simplesoftware.io |
-| 이메일 주소 | mailto: | mailto:support@simplesoftware.io |
+| 웹사이트(http) URL | http:// | http://www.example.com |
+| 웹사이트(https) URL | https:// | https://www.example.com |
+| 이메일 주소 | mailto: | mailto:support@example.com |
 | 전화번호 | tel: | tel:555-555-5555 |
 | 문자 메세지(SMS) | sms: | sms:555-555-5555 |
 | 내용이 미리 입력된 문자 메세지(SMS) | sms: | sms::I am a pretyped message |
 | 번호와 내용이 미리 입력된 문자 메세지(SMS) | sms: | sms:555-555-5555:I am a pretyped message |
 | 지리위치 정보(Geo Address) | geo: | geo:-78.400364,-85.916993 |
-| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@simplesoftware.io; |
+| MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@example.com; |
 | VCard | BEGIN:VCARD | [See Examples](https://en.wikipedia.org/wiki/VCard) |
 | 와이파이(Wifi) | wifi: | wifi:WEP/WPA;SSID;PSK;Hidden(True/False) |
 

@@ -4,11 +4,11 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| >= 2.x   | :white_check_mark: |
-| <= 1.x   | :x:                |
+| 4.3.x   | :white_check_mark: |
+| < 4.3   | :x:                |
 
 ## Reporting a Vulnerability
 
-Please report security vulnerabilities responsibility by emailing `security@simplesoftware.io.`
+Please report vulnerabilities privately through GitHub: open the [Security tab](https://github.com/jamalofski/simple-qrcode/security) of this repository and choose "Report a vulnerability".
 
-We will fix the vulnerability privately, push a new release, and then go public with the notification.  
+The fix is prepared privately, released, and then disclosed.

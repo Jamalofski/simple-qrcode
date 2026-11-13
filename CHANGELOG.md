@@ -3,6 +3,13 @@ Simple QrCode
 
 ##Change Log
 
+#### 4.3.0 (unreleased)
+* First release of the maintained fork, published as `jamalofski/simple-qrcode`. It declares `replace` for `simplesoftwareio/simple-qrcode`: same namespace, same facade, same API.
+* Requires `bacon/bacon-qr-code` ^3, so it installs next to `laravel/fortify` and the official Laravel starter kits.
+* Requires PHP 8.2 or later. Supports PHP 8.2 to 8.5 and Laravel 11 to 13.
+* `generate()` declares `$filename` as nullable (PHP 8.4 deprecation).
+* Documentation: links to the original project website removed (the domain no longer belongs to the project).
+
 #### 2.0.0
 * Fixed a bug where the merge image was not reset correctly. (#93)
 * Added Laravel auto discovery support. (#82) - Thanks [mazedlx](https://github.com/mazedlx)

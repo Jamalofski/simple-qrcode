@@ -5,6 +5,8 @@ use SimpleSoftwareIO\QrCode\DataTypes\Email;
 
 class EmailTest extends TestCase
 {
+    protected $email;
+
     public function setUp(): void
     {
         $this->email = new Email();

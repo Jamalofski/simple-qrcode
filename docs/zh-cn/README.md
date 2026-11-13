@@ -1,4 +1,3 @@
-[![构建状态](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode.svg?branch=master)](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode) [![最新稳定版本](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/stable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![最新版本](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/unstable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![许可](https://poser.pugx.org/simplesoftwareio/simple-qrcode/license.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![下载量](https://poser.pugx.org/simplesoftwareio/simple-qrcode/downloads.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
 
 
 - [介绍](#docs-introduction)
@@ -14,7 +13,7 @@
 ## 介绍
 Simple QrCode 是基于[Bacon/BaconQrCode](https://github.com/Bacon/BaconQrCode) 开发，适用于Laravel框架的软件包. 我们的目的是让二维码能更加便捷的使用在Laravel框架的项目里.
 
-![Example 1](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/example-1.png?raw=true) ![Example 2](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/example-2.png?raw=true)
+![Example 1](../imgs/example-1.png) ![Example 2](../imgs/example-2.png)
 
 <a id="docs-upgrade"></a>
 ## 升级指南
@@ -28,7 +27,7 @@ Simple QrCode 是基于[Bacon/BaconQrCode](https://github.com/Bacon/BaconQrCode)
 
 #### Composer安装
 
-使用 `composer require simplesoftwareio/simple-qrcode "~3"` 安装软件包，
+使用 `composer require jamalofski/simple-qrcode "^4.3"` 安装软件包，
 
 Laravel将会自动完成安装工作.
 
@@ -105,7 +104,7 @@ Laravel将会自动完成安装工作.
 
 	QrCode::size(100);
 
-![200 像素](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/200-pixels.png?raw=true) ![250 像素](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/250-pixels.png?raw=true)
+![200 像素](../imgs/200-pixels.png) ![250 像素](../imgs/250-pixels.png)
 
 #### 颜色  `color(int $red, int $green, int $blue, int $alpha = null)`
 
@@ -116,7 +115,7 @@ Laravel将会自动完成安装工作.
 QrCode::color(255, 0, 0); // 红色二维码
 QrCode::color(255, 0, 0, 25); //红色二维码+25%透明度
 
-![红色二维码](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-qrcode.png?raw=true) ![红色透明二维码](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-25-transparent.png?raw=true)
+![红色二维码](../imgs/red-qrcode.png) ![红色透明二维码](../imgs/red-25-transparent.png)
 
 
 #### 背景颜色 `backgroundColor(int $red, int $green, int $blue, int $alpha = null)`
@@ -126,7 +125,7 @@ QrCode::color(255, 0, 0, 25); //红色二维码+25%透明度
 	QrCode::backgroundColor(255, 0, 0); // 红色背景二维码
 	QrCode::backgroundColor(255, 0, 0, 25); // 红色25%透明背景二维码
 
-![红色背景二维码](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-background.png?raw=true) ![红色透明背景二维码](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-25-transparent-background.png?raw=true)
+![红色背景二维码](../imgs/red-background.png) ![红色透明背景二维码](../imgs/red-25-transparent-background.png)
 
 #### 渐变 `gradient($startRed, $startGreen, $startBlue, $endRed, $endGreen, $endBlue, string $type)`
 
@@ -136,11 +135,11 @@ QrCode::color(255, 0, 0, 25); //红色二维码+25%透明度
 
 | 类型 | 范例 |
 | --- | --- |
-| `vertical`垂直 | ![垂直](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/vertical.png?raw=true) |
-| `horizontal`水平 | ![水平](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/horizontal.png?raw=true) |
-| `diagonal`对角 | ![对角](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/diagonal.png?raw=true) |
-| `inverse_diagonal`反对角 | ![反对角](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/inverse_diagonal.png?raw=true) |
-| `radial`迳向 | ![迳向](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/radial.png?raw=true) |
+| `vertical`垂直 | ![垂直](../imgs/vertical.png) |
+| `horizontal`水平 | ![水平](../imgs/horizontal.png) |
+| `diagonal`对角 | ![对角](../imgs/diagonal.png) |
+| `inverse_diagonal`反对角 | ![反对角](../imgs/inverse_diagonal.png) |
+| `radial`迳向 | ![迳向](../imgs/radial.png) |
 
 #### 定位颜色 `eyeColor(int $eyeNumber, int $innerRed, int $innerGreen, int $innerBlue, int $outterRed = 0, int $outterGreen = 0, int $outterBlue = 0)`
 
@@ -148,9 +147,9 @@ QrCode::color(255, 0, 0, 25); //红色二维码+25%透明度
 
 | 数量 | 范例 |
 | --- | --- |
-| `0` | ![Eye 0](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/eye-0.png?raw=true) |
-| `1` | ![Eye 1](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/eye-1.png?raw=true)|
-| `2` | ![Eye 2](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/eye-2.png?raw=true) |
+| `0` | ![Eye 0](../imgs/eye-0.png) |
+| `1` | ![Eye 1](../imgs/eye-1.png)|
+| `2` | ![Eye 2](../imgs/eye-2.png) |
 
 #### 风格 `style(string $style, float $size = 0.5)`
 
@@ -158,9 +157,9 @@ QrCode::color(255, 0, 0, 25); //红色二维码+25%透明度
 
 | 风格 | 范例 |
 | --- | --- |
-| `sqaure`方 | ![方](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/200-pixels.png?raw=true) |
-| `dot`点 | ![点](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/dot.png)|
-| `round`圆 | ![圆](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/round.png?raw=true) |
+| `sqaure`方 | ![方](../imgs/200-pixels.png) |
+| `dot`点 | ![点](../imgs/dot.png)|
+| `round`圆 | ![圆](../imgs/round.png) |
 
 #### 定位眼风格 `eyeStyle(string $style)`
 
@@ -168,8 +167,8 @@ QrCode::color(255, 0, 0, 25); //红色二维码+25%透明度
 
 | 风格 | 范例 |
 | --- | --- |
-| `sqaure`方 | ![方](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/200-pixels.png?raw=true) |
-| `circle`圆 | ![圆](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/circle-eye.png?raw=true)|
+| `sqaure`方 | ![方](../imgs/200-pixels.png) |
+| `circle`圆 | ![圆](../imgs/circle-eye.png)|
 
 #### 边距 `margin(int $margin)`
 
@@ -249,7 +248,7 @@ QrCode 创建二维码时可以使用不同的编码.  默认使用 `ISO-8859-1`
 
 > 为了让二维码保持高可识别度,建议在使用 `merge` 方法时把二维码的容错级别提高. 我们推荐使用: `errorCorrection('H')`.
 
-![合并Logo](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/merged-qrcode.png?raw=true)
+![合并Logo](../imgs/merged-qrcode.png)
 
 #### 二进制合并 `(string $content, float $percentage = .2)`
 
@@ -377,20 +376,20 @@ QrCode 创建二维码时可以使用不同的编码.  默认使用 `ISO-8859-1`
 
 你还能通过下面表中的前缀信息创建适合更多场合的二维码
 
-	QrCode::generate('http://www.simplesoftware.io');
+	QrCode::generate('http://www.example.com');
 
 
 | 使用场景 | 前缀 | 例子 |
 | --- | --- | --- |
-| 网址 | http:// | http://www.simplesoftware.io |
-| 加密网址 | https:// | https://www.simplesoftware.io |
-| E-mail 地址 | mailto: | mailto:support@simplesoftware.io |
+| 网址 | http:// | http://www.example.com |
+| 加密网址 | https:// | https://www.example.com |
+| E-mail 地址 | mailto: | mailto:support@example.com |
 | 电话号码 | tel: | tel:555-555-5555 |
 | 文字短信 | sms: | sms:555-555-5555 |
 | 文字短信内容 | sms: | sms::I am a pretyped message |
 | 文字短信同时附带手机号和短信内容 | sms: | sms:555-555-5555:I am a pretyped message |
 | 坐标 | geo: | geo:-78.400364,-85.916993 |
-| MeCard名片 | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@simplesoftware.io; |
+| MeCard名片 | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@example.com; |
 | VCard名片 | BEGIN:VCARD | [更多范例](https://en.wikipedia.org/wiki/VCard) |
 | Wifi | wifi: | wifi:WEP/WPA;SSID;PSK;Hidden(True/False) |
 

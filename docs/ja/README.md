@@ -1,6 +1,5 @@
-[![Build Status](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode.svg?branch=master)](https://travis-ci.org/SimpleSoftwareIO/simple-qrcode) [![Latest Stable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/stable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Latest Unstable Version](https://poser.pugx.org/simplesoftwareio/simple-qrcode/v/unstable.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![License](https://poser.pugx.org/simplesoftwareio/simple-qrcode/license.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode) [![Total Downloads](https://poser.pugx.org/simplesoftwareio/simple-qrcode/downloads.svg)](https://packagist.org/packages/simplesoftwareio/simple-qrcode)
 
-#### [Deutsch](http://www.simplesoftware.io/#/docs/simple-qrcode/de) | [Español](http://www.simplesoftware.io/#/docs/simple-qrcode/es) | [Français](http://www.simplesoftware.io/#/docs/simple-qrcode/fr) | [Italiano](http://www.simplesoftware.io/#/docs/simple-qrcode/it) | [Português](http://www.simplesoftware.io/#/docs/simple-qrcode/pt-br) | [Русский](http://www.simplesoftware.io/#/docs/simple-qrcode/ru) | [日本語](http://www.simplesoftware.io/#/docs/simple-qrcode/ja) | [한국어](http://www.simplesoftware.io/#/docs/simple-qrcode/kr) | [हिंदी](http://www.simplesoftware.io/#/docs/simple-qrcode/hi) | [简体中文](http://www.simplesoftware.io/#/docs/simple-qrcode/zh-cn) | [العربية](https://www.simplesoftware.io/#/docs/simple-qrcode/ar)
+#### [Deutsch](../de/README.md) | [Español](../es/README.md) | [Français](../fr/README.md) | [Italiano](../it/README.md) | [Português](../pt-br/README.md) | [Русский](../ru/README.md) | [日本語](../ja/README.md) | [한국어](../kr/README.md) | [हिंदी](../hi/README.md) | [简体中文](../zh-cn/README.md) | [العربية](../ar/README.md)
 
 - [イントロダクション](#docs-introduction)
 - [アップグレードガイド](#docs-upgrade)
@@ -16,7 +15,7 @@
 ## イントロダクション
 Simple QrCode は [Bacon/BaconQrCode](https://github.com/Bacon/BaconQrCode) を元に作られた 人気のあるLaravelフレームワークで簡単に使う事のできるラッパーです。Laravelユーザーになじみのある使い方ができるように開発されました。
 
-![Example 1](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/example-1.png?raw=true) ![Example 2](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/example-2.png?raw=true)
+![Example 1](../imgs/example-1.png) ![Example 2](../imgs/example-2.png)
 
 <a id="docs-translations"></a>
 ## 翻訳
@@ -53,7 +52,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 #### Composer
 
-`composer require simplesoftwareio/simple-qrcode "~4"` を実行してパッケージを追加します。
+`composer require jamalofski/simple-qrcode "^4.3"` を実行してパッケージを追加します。
 
 Laravelが自動的に必要なパッケージをインストールします。
 
@@ -88,7 +87,7 @@ Laravelが自動的に必要なパッケージをインストールします。
 
 これで「Make me into a QrCode!」というQRコードが作成されます。
 
-![QRコード生成例](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/make-me-into-a-qrcode.png?raw=true)
+![QRコード生成例](../imgs/make-me-into-a-qrcode.png)
 
 #### 生成する
 
@@ -147,7 +146,7 @@ Laravel Blade に以下の様に書くことで モダンなブラウザに表�
 	QrCode::backgroundColor(255, 0, 0); // 赤が背景色のQRコード
 	QrCode::backgroundColor(255, 0, 0, 25); // 透明度25%で赤が背景色のQRコード
 
-![赤が背景色のQRコード](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-background.png?raw=true) ![赤が背景色で透過なQRコード](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/red-25-transparent-background.png?raw=true)
+![赤が背景色のQRコード](../imgs/red-background.png) ![赤が背景色で透過なQRコード](../imgs/red-25-transparent-background.png)
 
 #### グラデーション `(int $startRed, int $startGreen, int $startBlue, int $endRed, int $endGreen, int $endBlue, string $type)`
 
@@ -157,11 +156,11 @@ Laravel Blade に以下の様に書くことで モダンなブラウザに表�
 
 | タイプ                | 例                                                                                                                                    |
 |--------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `vertical`         | ![Vertical](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/vertical.png?raw=true)                 |
-| `horizontal`       | ![Horizontal](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/horizontal.png?raw=true)             |
-| `diagonal`         | ![Diagonal](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/diagonal.png?raw=true)                 |
-| `inverse_diagonal` | ![Inverse Diagonal](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/inverse_diagonal.png?raw=true) |
-| `radial`           | ![Radial](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/radial.png?raw=true)                     |
+| `vertical`         | ![Vertical](../imgs/vertical.png)                 |
+| `horizontal`       | ![Horizontal](../imgs/horizontal.png)             |
+| `diagonal`         | ![Diagonal](../imgs/diagonal.png)                 |
+| `inverse_diagonal` | ![Inverse Diagonal](../imgs/inverse_diagonal.png) |
+| `radial`           | ![Radial](../imgs/radial.png)                     |
 
 #### 切り出しシンボル色 `(int $eyeNumber, int $innerRed, int $innerGreen, int $innerBlue, int $outterRed = 0, int $outterGreen = 0, int $outterBlue = 0)`
 
@@ -171,9 +170,9 @@ Laravel Blade に以下の様に書くことで モダンなブラウザに表�
 
 | シンボル番号 | 例                                                                                                               |
 |--------|-----------------------------------------------------------------------------------------------------------------|
-| `0`    | ![Eye 0](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/eye-0.png?raw=true)  |
-| `1`    | ![Eye 1](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/eye-1.png?raw=true)  |
-| `2`    | ![Eye  2](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/eye-2.png?raw=true) |
+| `0`    | ![Eye 0](../imgs/eye-0.png)  |
+| `1`    | ![Eye 1](../imgs/eye-1.png)  |
+| `2`    | ![Eye  2](../imgs/eye-2.png) |
 
 
 #### スタイル `(string $style, float $size = 0.5)`
@@ -186,9 +185,9 @@ Laravel Blade に以下の様に書くことで モダンなブラウザに表�
 
 | スタイル     | 例                                                                                                                    |
 |----------|----------------------------------------------------------------------------------------------------------------------|
-| `square` | ![Square](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/200-pixels.png?raw=true) |
-| `dot`    | ![Dot](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/dot.png)                    |
-| `round`  | ![Round](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/round.png?raw=true)       |
+| `square` | ![Square](../imgs/200-pixels.png) |
+| `dot`    | ![Dot](../imgs/dot.png)                    |
+| `round`  | ![Round](../imgs/round.png)       |
 
 #### 切り出しシンボルのスタイル `(string $style)`
 
@@ -198,8 +197,8 @@ Laravel Blade に以下の様に書くことで モダンなブラウザに表�
 
 | スタイル     | 例                                                                                                                    |
 |----------|----------------------------------------------------------------------------------------------------------------------|
-| `square` | ![Square](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/200-pixels.png?raw=true) |
-| `circle` | ![Circle](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/circle-eye.png?raw=true) |
+| `square` | ![Square](../imgs/200-pixels.png) |
+| `circle` | ![Circle](../imgs/circle-eye.png) |
 
 #### マージンの変更 `(int $margin)`
 
@@ -280,7 +279,7 @@ QRコードの生成に使われる文字コードを変更します。デフォ
 
 > `merge`メソッドを使用して画像を重ねているときでもQRコードを読み取れるようにするために、エラー訂正レベルも高くするべきです。`errorCorrection('H')`の使用を推奨します。
 
-![ロゴを重ねた状態のサンプル](https://raw.githubusercontent.com/SimpleSoftwareIO/simple-qrcode/master/docs/imgs/merged-qrcode.png?raw=true)
+![ロゴを重ねた状態のサンプル](../imgs/merged-qrcode.png)
 
 #### バイナリ文字列による重ね合わせ `(string $content, float $percentage = .2)`
 
@@ -408,20 +407,20 @@ QRコードの生成に使われる文字コードを変更します。デフォ
 
 `generate`メソッドに渡す文字列にプレフィックスを付けることで、様々なQRコードを生成できます。
 
-	QrCode::generate('http://www.simplesoftware.io');
+	QrCode::generate('http://www.example.com');
 
 
 | 利用方法            | プレフィックス     | 例                                                                                                        |
 |-----------------|-------------|----------------------------------------------------------------------------------------------------------|
-| ウェブサイトURL       | http://     | http://www.simplesoftware.io                                                                             |
-| 暗号化されたウェブサイトURL | https://    | https://www.simplesoftware.io                                                                            |
-| Eメールアドレス        | mailto:     | mailto:support@simplesoftware.io                                                                         |
+| ウェブサイトURL       | http://     | http://www.example.com                                                                             |
+| 暗号化されたウェブサイトURL | https://    | https://www.example.com                                                                            |
+| Eメールアドレス        | mailto:     | mailto:support@example.com                                                                         |
 | 電話番号            | tel:        | tel:555-555-5555                                                                                         |
 | SMS             | sms:        | sms:555-555-5555                                                                                         |
 | 本文入力済みSMS       | sms:        | sms::入力済みメッセージ                                                                                           |
 | 本文・宛先入力済みSMS    | sms:        | sms:555-555-5555:入力済みメッセージ                                                                               |
 | 位置情報            | geo:        | geo:-78.400364,-85.916993                                                                                |
-| MeCard          | mecard:     | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@simplesoftware.io; |
+| MeCard          | mecard:     | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@example.com; |
 | VCard           | BEGIN:VCARD | [例（リンク先は英語です）](https://en.wikipedia.org/wiki/VCard)                                                      |
 | Wi-Fi           | wifi:       | wifi:WEP/WPA;SSID;PSK;Hidden(True/False)                                                                 |
 
