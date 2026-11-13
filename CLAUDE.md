@@ -37,9 +37,10 @@ in favour of this fork, or transferred.
   with the sections that apply, in this order: `### Behavior changes` (what can need a change in
   the user's code), `Added`, `Changed`, `Fixed`, `Documentation`, `Thanks`. Upstream issues and
   pull requests are links to SimpleSoftwareIO/simple-qrcode.
-- The body of a GitHub release is the upgrade commands, as in the 4.4.0 release, then the
-  CHANGELOG entry word for word, its `###` sections raised to `##`. Never write release notes
-  apart from the CHANGELOG: the two drifted in 4.4.0. Print an entry with
+- The body of a GitHub release is the CHANGELOG entry word for word, its `###` sections raised
+  to `##`, with the upgrade commands between its opening lines and its first section, as in the
+  4.4.0 release. Never write release notes apart from the CHANGELOG: the two drifted in 4.4.0.
+  Print an entry with
   `awk -v v=4.4.0 'index($0, "## " v " ") == 1 {f=1; next} /^## / && f {exit} f' CHANGELOG.md`.
 - The README describes the package as it is, with no list of what a version adds; its
   "Migrating" section lists the behavior changes since 4.2.
