@@ -162,6 +162,10 @@ The style can be easily swapped out with `square`, `dot,` or `round`.  This will
 
 	QrCode::style('dot'); // Uses the `dot` style.
 
+Unless you choose an eye style, the `dot` style draws the eyes with dots too, and some readers, ZXing among them, cannot find eyes made of dots: the QrCode may not scan. Set `square` or `circle` eyes with it, as in the example below.
+
+	QrCode::style('dot')->eye('square');
+
 | Style | Example |
 | --- | --- |
 | `square` | ![Square](../imgs/200-pixels.png) |
@@ -351,7 +355,7 @@ This helper makes SMS messages that can be prefilled with the send to address an
 
 #### WiFi
 
-This helpers makes scannable QrCodes that can connect a phone to a WiFi network:
+This helpers makes scannable QrCodes that can connect a phone to a WiFi network. Pass the SSID and the password as they are: `\`, `;`, `,`, `"` and `:` are escaped for you.
 
 	QrCode::wiFi([
 		'encryption' => 'WPA/WEP',

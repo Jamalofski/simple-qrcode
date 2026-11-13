@@ -69,4 +69,19 @@ class WiFiTest extends TestCase
 
         $this->assertEquals($properFormat, strval($this->wifi));
     }
+
+    public function test_it_escapes_the_special_characters_of_the_ssid_and_password()
+    {
+        $this->wifi->create([
+            0 => [
+                'ssid'       => 'Café; "Guest", 2:4',
+                'encryption' => 'WPA',
+                'password'   => 'a;b,c:d"e\\f',
+            ],
+        ]);
+
+        $properFormat = 'WIFI:T:WPA;S:Café\\; \\"Guest\\"\\, 2\\:4;P:a\\;b\\,c\\:d\\"e\\\\f;';
+
+        $this->assertEquals($properFormat, strval($this->wifi));
+    }
 }

@@ -4,7 +4,10 @@ Simple QrCode
 ##Change Log
 
 #### 4.3.1 (unreleased)
+* `wiFi()` escapes `\`, `;`, `,`, `"` and `:` in the SSID, the password and the encryption with a backslash, as phone readers expect. A password containing `;` gave a QR code that could not connect. If you escaped these characters yourself, remove your escaping.
+* Documentation: unless an eye style is set, the `dot` style draws the eyes with dots, and some readers, ZXing among them, cannot find them (upstream #204). The documentation now recommends `eye('square')` or `eye('circle')` with it.
 * `composer.json`: the `ext-imagick` suggestion no longer says it is needed for `png`. Since 4.3.0, `png` is rendered with GD without it; `imagick` is needed only for dot and round styles, circle eyes and gradients.
+* Upstream #290 (round style broken in `eps`) no longer reproduces with bacon 3: the `eps` output matches the `svg` one and decodes.
 
 #### 4.3.0 (2026-11-13)
 * First release of the maintained fork, published as `jamalofski/simple-qrcode`. It declares `replace` for `simplesoftwareio/simple-qrcode`: same namespace, same facade, same API.

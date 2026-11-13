@@ -76,19 +76,32 @@ class WiFi implements DataTypeInterface
         $wifi = $this->prefix;
 
         if (isset($this->encryption)) {
-            $wifi .= 'T:'.$this->encryption.$this->separator;
+            $wifi .= 'T:'.$this->escape($this->encryption).$this->separator;
         }
         if (isset($this->ssid)) {
-            $wifi .= 'S:'.$this->ssid.$this->separator;
+            $wifi .= 'S:'.$this->escape($this->ssid).$this->separator;
         }
         if (isset($this->password)) {
-            $wifi .= 'P:'.$this->password.$this->separator;
+            $wifi .= 'P:'.$this->escape($this->password).$this->separator;
         }
         if (isset($this->hidden)) {
             $wifi .= 'H:'.$this->hidden.$this->separator;
         }
 
         return $wifi;
+    }
+
+    /**
+     * Escapes the characters that delimit the fields of a WiFi string:
+     * a backslash before \ ; , " and :, as phone readers expect.
+     *
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function escape($value)
+    {
+        return addcslashes((string) $value, '\\;,":');
     }
 
     /**

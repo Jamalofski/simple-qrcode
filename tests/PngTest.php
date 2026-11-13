@@ -143,4 +143,24 @@ class PngTest extends TestCase
 
         $this->assertSame('square', $this->decode($png));
     }
+
+    public static function optionsOnlyImagickRenders(): array
+    {
+        return [
+            // Upstream #211: a gradient with a margin cut the eyes off.
+            'gradient and margin' => [fn (Generator $g) => $g->margin(2)->gradient(0, 0, 0, 0, 0, 140, 'horizontal')],
+            'dot style, square eyes' => [fn (Generator $g) => $g->style('dot', 0.9)->eye('square')],
+            'dot style, circle eyes' => [fn (Generator $g) => $g->style('dot')->eye('circle')],
+            // Upstream #290 was about eps; png goes through another backend.
+            'round style' => [fn (Generator $g) => $g->style('round', 0.9)],
+        ];
+    }
+
+    #[DataProvider('optionsOnlyImagickRenders')]
+    public function test_options_only_imagick_renders_still_decode(Closure $option)
+    {
+        $generator = $option($this->generator(Generator::class)->format('png')->size(300)->margin(1));
+
+        $this->assertSame('imagick only', $this->decode((string) $generator->generate('imagick only')));
+    }
 }
