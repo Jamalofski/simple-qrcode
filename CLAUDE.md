@@ -31,6 +31,19 @@ in favour of this fork, or transferred.
   fix, run a subset: `gh workflow run tests.yml -f php='["8.4"]' -f laravel='["13"]'`.
 - Actions stay pinned by commit SHA.
 
+## Changelog, releases and README
+
+- `CHANGELOG.md` is the single source of changes. One entry per version, `## x.y.z (YYYY-MM-DD)`,
+  with the sections that apply, in this order: `### Behavior changes` (what can need a change in
+  the user's code), `Added`, `Changed`, `Fixed`, `Documentation`, `Thanks`. Upstream issues and
+  pull requests are links to SimpleSoftwareIO/simple-qrcode.
+- The body of a GitHub release is the upgrade commands, as in the 4.4.0 release, then the
+  CHANGELOG entry word for word, its `###` sections raised to `##`. Never write release notes
+  apart from the CHANGELOG: the two drifted in 4.4.0. Print an entry with
+  `awk -v v=4.4.0 'index($0, "## " v " ") == 1 {f=1; next} /^## / && f {exit} f' CHANGELOG.md`.
+- The README describes the package as it is, with no list of what a version adds; its
+  "Migrating" section lists the behavior changes since 4.2.
+
 ## Local test setup (Windows)
 
 The PHP on Jamal's machine has no php.ini. Use a temporary one passed through `PHPRC` that

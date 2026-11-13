@@ -10,11 +10,11 @@ Simple QrCode is an easy to use wrapper for the popular Laravel framework based 
 <a id="docs-upgrade"></a>
 ## Upgrade Guide
 
-Coming from `simplesoftwareio/simple-qrcode`: replace it with `jamalofski/simple-qrcode` in your `composer.json`. Version 4.3 requires PHP 8.2 and `bacon/bacon-qr-code` ^3; your code does not change.
+Coming from `simplesoftwareio/simple-qrcode`: replace it with `jamalofski/simple-qrcode` in your `composer.json`. Version 4.3 requires PHP 8.2 and `bacon/bacon-qr-code` ^3; your code does not change, but a few behaviors do: the [CHANGELOG](../../CHANGELOG.md) lists them first in each version.
 
 Upgrade from v2 or v3 by changing your `composer.json` file to `^4.3`
 
-`png` and `webp` images are rendered with `imagick` when it is installed, and with GD otherwise. GD draws square modules and square eyes only, without gradient: `style('dot')`, `style('round')`, eye styles other than `square` and `gradient()` need `imagick` in `png` and `webp`, and throw an exception without it. `svg` and `eps` support every option.
+`png` and `webp` images are rendered with `imagick` when it is installed, and with GD otherwise. GD draws square modules and square eyes only, without gradient: `style('dot')`, `style('round')`, eye styles other than `square` and `gradient()` need `imagick` in `png` and `webp`, and throw an exception without it. `webp` also needs GD with WebP support, even with `imagick`. `svg` and `eps` support every option.
 
 #### v4
 
