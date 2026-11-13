@@ -42,7 +42,7 @@
         "simplesoftwareio/simple-qrcode": "self.version"
     },
     "suggest": {
-        "ext-imagick": "Allows the generation of PNG QrCodes.",
+        "ext-imagick": "Needed in png for dot and round styles, circle eyes and gradients. Without it, png is rendered with GD: square modules and square eyes only.",
         "illuminate/support": "Allows for use within Laravel."
     },
     "autoload": {

@@ -3,6 +3,9 @@ Simple QrCode
 
 ##Change Log
 
+#### 4.3.1 (unreleased)
+* `composer.json`: the `ext-imagick` suggestion no longer says it is needed for `png`. Since 4.3.0, `png` is rendered with GD without it; `imagick` is needed only for dot and round styles, circle eyes and gradients.
+
 #### 4.3.0 (2026-11-13)
 * First release of the maintained fork, published as `jamalofski/simple-qrcode`. It declares `replace` for `simplesoftwareio/simple-qrcode`: same namespace, same facade, same API.
 * Requires `bacon/bacon-qr-code` ^3, so it installs next to `laravel/fortify` and the official Laravel starter kits.
