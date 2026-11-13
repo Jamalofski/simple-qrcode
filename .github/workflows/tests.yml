@@ -1,8 +1,16 @@
 name: Tests
 
-# Manual only: run it before a release.
+# Manual only: run the full matrix before a release. To check a fix, run a subset,
+# for example php ["8.4"] and laravel ["13"].
 on:
   workflow_dispatch:
+    inputs:
+      php:
+        description: PHP versions, as a JSON list
+        default: '["8.2", "8.3", "8.4", "8.5"]'
+      laravel:
+        description: Laravel versions, as a JSON list
+        default: '["11", "12", "13"]'
 
 permissions:
   contents: read
@@ -14,15 +22,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['8.2', '8.3', '8.4', '8.5']
-        laravel: ['11', '12', '13']
-        include:
-          - laravel: '11'
-            testbench: '^9.0'
-          - laravel: '12'
-            testbench: '^10.0'
-          - laravel: '13'
-            testbench: '^11.0'
+        php: ${{ fromJSON(inputs.php) }}
+        laravel: ${{ fromJSON(inputs.laravel) }}
         exclude:
           - php: '8.2'
             laravel: '13'
@@ -41,11 +42,12 @@ jobs:
       - name: Validate composer.json
         run: composer validate --strict --no-check-lock
 
+      # Testbench 9, 10 and 11 run Laravel 11, 12 and 13.
       # Laravel 11 is out of security support: Composer blocks it unless told otherwise.
       - name: Install dependencies
         run: >
           composer update --prefer-dist --no-interaction --no-progress -W
-          --with "orchestra/testbench:${{ matrix.testbench }}"
+          --with "orchestra/testbench:${{ matrix.laravel == '11' && '^9.0' || matrix.laravel == '12' && '^10.0' || '^11.0' }}"
           ${{ matrix.laravel == '11' && '--no-security-blocking' || '' }}
 
       - name: Run test suite

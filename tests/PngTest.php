@@ -38,7 +38,10 @@ class PngTest extends TestCase
 
     private function decode(string $png): string
     {
-        return (string) (new QrReader($png, QrReader::SOURCE_TYPE_BLOB))->text();
+        // Always decode through GD. The decoder's imagick path sets the gray colorspace
+        // without converting the pixels (only the red channel survives) and exports them
+        // from (1, 1): a dark blue or red module then reads as light, unlike on a phone.
+        return (string) (new QrReader($png, QrReader::SOURCE_TYPE_BLOB, false))->text();
     }
 
     private function pixel(string $png, int $x, int $y): array
