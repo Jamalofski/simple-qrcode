@@ -2,7 +2,7 @@
 
 Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/simple-qrcode`. In each version, behavior changes, which can need a change in your code, come first. Upstream links point to [SimpleSoftwareIO/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode).
 
-## 4.5.0 (unreleased)
+## 4.5.0 (2026-11-14)
 
 No existing signature changes.
 
