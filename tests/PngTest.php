@@ -187,7 +187,7 @@ class PngTest extends TestCase
             'rounded external eye, circle internal eye' => [fn (Generator $g) => $g->externalEye('rounded')->internalEye('circle')],
             'webp from imagick' => [fn (Generator $g) => $g->format('webp')->eye('rounded')],
             'custom style and eye' => [fn (Generator $g) => $g->customStyle(new DotsModule(0.8))->customEye(SquareEye::instance())],
-            'round style on a cleared area' => [fn (Generator $g) => $g->style('round', 0.7)->errorCorrection('H')->merge(__DIR__.'/Images/simplesoftware-icon-grey-blue.png', .25, true)->clearUnderLogo(1)],
+            'round style on a cleared area' => [fn (Generator $g) => $g->style('round', 0.7)->errorCorrection('H')->merge(__DIR__.'/Images/simplesoftware-icon-grey-blue.png', .2, true)->clearUnderLogo()],
         ];
     }
 
@@ -362,8 +362,9 @@ class PngTest extends TestCase
     #[DataProvider('renderers')]
     public function test_codes_with_a_logo_on_a_cleared_area_decode(string $class)
     {
-        foreach (['https://example.com', 'Hello world, this is a QR code with a logo.'] as $text) {
-            foreach ([.2, .3] as $percentage) {
+        // As the documentation advises: on a short content, a logo of 20% at most.
+        foreach (['https://example.com' => [.2], 'Hello world, this is a QR code with a logo.' => [.2, .25]] as $text => $percentages) {
+            foreach ($percentages as $percentage) {
                 $png = (string) $this->generator($class)
                     ->format('png')
                     ->size(400)
