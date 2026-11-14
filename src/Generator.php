@@ -4,6 +4,7 @@ namespace SimpleSoftwareIO\QrCode;
 
 use BaconQrCode\Common\ErrorCorrectionLevel;
 use BaconQrCode\Encoder\Encoder;
+use BaconQrCode\Encoder\QrCode as EncodedQrCode;
 use BaconQrCode\Exception\WriterException;
 use BaconQrCode\Renderer\Color\Alpha;
 use BaconQrCode\Renderer\Color\ColorInterface;
@@ -20,6 +21,7 @@ use BaconQrCode\Renderer\Image\ImageBackEndInterface;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererInterface;
 use BaconQrCode\Renderer\Module\DotsModule;
 use BaconQrCode\Renderer\Module\ModuleInterface;
 use BaconQrCode\Renderer\Module\RoundnessModule;
@@ -42,6 +44,7 @@ use SimpleSoftwareIO\QrCode\Eye\RoundedEye;
  * Helpers resolved by __call() from the classes of the DataTypes namespace.
  *
  * @method \Illuminate\Support\HtmlString|string|null BTC(string $address, float|null $amount = null, array $options = [])
+ * @method \Illuminate\Support\HtmlString|string|null calendar(array $event)
  * @method \Illuminate\Support\HtmlString|string|null EPC(array $transfer)
  * @method \Illuminate\Support\HtmlString|string|null email(?string $to = null, ?string $subject = null, ?string $body = null)
  * @method \Illuminate\Support\HtmlString|string|null geo(float $latitude, float $longitude)
@@ -190,6 +193,28 @@ class Generator
     protected $imagePercentage = .2;
 
     /**
+     * The margin, in modules, of the area cleared under a merged image. Null leaves the
+     * modules under the image.
+     *
+     * @var int|null
+     */
+    private $logoClearance = null;
+
+    /**
+     * A module renderer set with customStyle(), over style().
+     *
+     * @var ModuleInterface|null
+     */
+    private $customModule = null;
+
+    /**
+     * An eye renderer set with customEye(), over eye().
+     *
+     * @var EyeInterface|null
+     */
+    private $customEye = null;
+
+    /**
      * Creates a new datatype object and then generates a QrCode.
      *
      * @param $method
@@ -228,9 +253,13 @@ class Generator
             throw new RuntimeException('The webp format needs the GD extension with WebP support.');
         }
 
-        $writer = $this->usesGdForPng()
-            ? new Writer($this->getGdRenderer())
-            : $this->getWriter($this->getRenderer());
+        $renderer = $this->usesGdForPng() ? $this->getGdRenderer() : $this->getRenderer();
+
+        if ($this->clearsUnderLogo()) {
+            $writer = new Writer($this->clearingUnderLogo($renderer));
+        } else {
+            $writer = $renderer instanceof ImageRenderer ? $this->getWriter($renderer) : new Writer($renderer);
+        }
 
         // A merged logo hides part of the code: at level L, most codes no longer read.
         // Without an explicit level, it is raised to H. eps ignores the logo.
@@ -473,6 +502,56 @@ class Generator
     public function eye(string $style): self
     {
         $this->eyeStyle = $this->validEyeStyle($style);
+        $this->customEye = null;
+
+        return $this;
+    }
+
+    /**
+     * Draws the modules with your own bacon/bacon-qr-code module, in place of style().
+     *
+     * @param ModuleInterface $module
+     * @return Generator
+     */
+    public function customStyle(ModuleInterface $module): self
+    {
+        $this->customModule = $module;
+        $this->style = 'square';
+        $this->styleSize = null;
+
+        return $this;
+    }
+
+    /**
+     * Draws the eyes with your own bacon/bacon-qr-code eye, in place of eye().
+     * externalEye() and internalEye() still apply over it.
+     *
+     * @param EyeInterface $eye
+     * @return Generator
+     */
+    public function customEye(EyeInterface $eye): self
+    {
+        $this->customEye = $eye;
+        $this->eyeStyle = null;
+
+        return $this;
+    }
+
+    /**
+     * Clears the modules under a merged image instead of covering them, leaving the image
+     * on the background. The eyes, their separators and the format information stay.
+     *
+     * @param int $margin the empty band kept around the image, in modules
+     * @return Generator
+     * @throws InvalidArgumentException
+     */
+    public function clearUnderLogo(int $margin = 0): self
+    {
+        if ($margin < 0) {
+            throw new InvalidArgumentException("\$margin must be 0 or more. {$margin} is not valid.");
+        }
+
+        $this->logoClearance = $margin;
 
         return $this;
     }
@@ -556,12 +635,14 @@ class Generator
             throw new InvalidArgumentException("\$style must be square, dot, or round. {$style} is not a valid.");
         }
 
-        if ($size < 0 || $size >= 1) {
-            throw new InvalidArgumentException("\$size must be between 0 and 1.  {$size} is not valid.");
+        // The square style ignores the size; the dots and the roundness need more than 0, up to 1.
+        if ($size < 0 || $size > 1 || ($size == 0 && $style !== 'square')) {
+            throw new InvalidArgumentException("\$size must be between 0 and 1, and more than 0 for dot and round.  {$size} is not valid.");
         }
 
         $this->style = $style;
         $this->styleSize = $size;
+        $this->customModule = null;
 
         return $this;
     }
@@ -678,6 +759,14 @@ class Generator
             $unsupported[] = "style('{$this->style}')";
         }
 
+        if ($this->customModule !== null) {
+            $unsupported[] = 'customStyle()';
+        }
+
+        if ($this->customEye !== null) {
+            $unsupported[] = 'customEye()';
+        }
+
         foreach (['eye' => $this->eyeStyle, 'externalEye' => $this->externalEyeStyle, 'internalEye' => $this->internalEyeStyle] as $method => $eyeStyle) {
             if ($eyeStyle !== null && $eyeStyle !== 'square') {
                 $unsupported[] = "{$method}('{$eyeStyle}')";
@@ -718,7 +807,9 @@ class Generator
     {
         if (in_array($this->format, ['png', 'webp'])) {
             // ImageMagick reads the png "quality" as the zlib level (tens) and the filter (units).
-            return new ImagickImageBackEnd('png', $this->pngLevel(100, 10));
+            // Antialiasing only blurs the edges of square modules and eyes when a module does not
+            // fall on whole pixels, as in small images. bacon 3.0 ignores the third argument.
+            return new ImagickImageBackEnd('png', $this->pngLevel(100, 10), ! $this->drawsOnlySquares());
         }
 
         if ($this->format === 'eps') {
@@ -735,6 +826,10 @@ class Generator
      */
     public function getModule(): ModuleInterface
     {
+        if ($this->customModule !== null) {
+            return $this->customModule;
+        }
+
         if ($this->style === 'dot') {
             return new DotsModule($this->styleSize);
         }
@@ -753,7 +848,7 @@ class Generator
      */
     public function getEye(): EyeInterface
     {
-        $eye = $this->createEye($this->eyeStyle) ?? new ModuleEye($this->getModule());
+        $eye = $this->customEye ?? $this->createEye($this->eyeStyle) ?? new ModuleEye($this->getModule());
 
         if ($this->externalEyeStyle === null && $this->internalEyeStyle === null) {
             return $eye;
@@ -882,6 +977,175 @@ class Generator
         imagewebp($image, null, $this->quality ?? (defined('IMG_WEBP_LOSSLESS') ? IMG_WEBP_LOSSLESS : 101));
 
         return ob_get_clean();
+    }
+
+    /**
+     * Whether the modules and the eyes are all squares, which antialiasing can only blur.
+     * The module and the eye are checked themselves, as a subclass may return its own.
+     *
+     * @return bool
+     */
+    private function drawsOnlySquares(): bool
+    {
+        if (! $this->getModule() instanceof SquareModule) {
+            return false;
+        }
+
+        $squares = [SquareEye::instance(), new ModuleEye(SquareModule::instance())];
+        $eyes = $squares;
+
+        foreach ($squares as $external) {
+            foreach ($squares as $internal) {
+                $eyes[] = new CompositeEye($external, $internal);
+            }
+        }
+
+        // Loose comparison: same class and same properties.
+        return in_array($this->getEye(), $eyes);
+    }
+
+    /**
+     * Whether the modules under a merged image are cleared. eps ignores the image.
+     *
+     * @return bool
+     */
+    private function clearsUnderLogo(): bool
+    {
+        return $this->logoClearance !== null && $this->imageMerge !== null && $this->format !== 'eps';
+    }
+
+    /**
+     * Wraps a renderer so that it clears the modules under the merged image first.
+     *
+     * @param RendererInterface $renderer
+     * @return RendererInterface
+     */
+    private function clearingUnderLogo(RendererInterface $renderer): RendererInterface
+    {
+        $clear = fn (EncodedQrCode $qrCode) => $this->clearModulesUnderLogo($qrCode);
+
+        return new class($renderer, $clear) implements RendererInterface
+        {
+            public function __construct(private RendererInterface $renderer, private \Closure $clear)
+            {
+            }
+
+            public function render(EncodedQrCode $qrCode): string
+            {
+                ($this->clear)($qrCode);
+
+                return $this->renderer->render($qrCode);
+            }
+        };
+    }
+
+    /**
+     * Clears the modules that the merged image overlaps, even partly, and those of the margin
+     * around it, keeping the eyes, their separators, and the format and version information.
+     *
+     * A subclass that changes the margin through getRendererStyle() is not followed here,
+     * nor is getWriter() called on this path: both are older than this option.
+     *
+     * @param EncodedQrCode $qrCode
+     * @return void
+     */
+    private function clearModulesUnderLogo(EncodedQrCode $qrCode): void
+    {
+        $matrix = $qrCode->getMatrix();
+        $size = $matrix->getWidth();
+        [$imageLeft, $imageTop, $imageRight, $imageBottom] = $this->logoArea($size);
+
+        // A module from x to x + 1 overlaps the area when x + 1 > start and x < end.
+        $range = function (float $start, float $end) use ($size): array {
+            $start -= $this->logoClearance;
+            $end += $this->logoClearance;
+
+            return [max(0, (int) floor($start + 1e-9)), min($size - 1, (int) ceil($end - 1e-9) - 1)];
+        };
+
+        [$left, $right] = $range($imageLeft, $imageRight);
+        [$top, $bottom] = $range($imageTop, $imageBottom);
+        $versionInformation = $qrCode->getVersion()->getVersionNumber() >= 7;
+
+        for ($y = $top; $y <= $bottom; $y++) {
+            for ($x = $left; $x <= $right; $x++) {
+                if (! $this->isKeptUnderLogo($x, $y, $size, $versionInformation)) {
+                    $matrix->set($x, $y, 0);
+                }
+            }
+        }
+    }
+
+    /**
+     * Whether a module belongs to an eye, its separator, or the format or version information,
+     * which a reader needs before it can read anything else.
+     *
+     * @param int $x
+     * @param int $y
+     * @param int $size
+     * @param bool $versionInformation
+     * @return bool
+     */
+    private function isKeptUnderLogo(int $x, int $y, int $size, bool $versionInformation): bool
+    {
+        if (($y < 9 && ($x < 9 || $x >= $size - 8)) || ($x < 9 && $y >= $size - 8)) {
+            return true;
+        }
+
+        return $versionInformation
+            && (($y < 6 && $x >= $size - 11 && $x < $size - 8) || ($x < 6 && $y >= $size - 11 && $y < $size - 8));
+    }
+
+    /**
+     * Where the merged image lies, in modules from the top left corner of the matrix:
+     * [left, top, right, bottom]. It follows SvgImageMerge in svg, and ImageMerge, which
+     * rounds to whole pixels, in png and webp.
+     *
+     * @param int $size The width of the matrix, in modules
+     * @return float[]
+     */
+    private function logoArea(int $size): array
+    {
+        $pixels = $this->pixels;
+        $module = $pixels / ($size + 2 * $this->margin);
+
+        if ($this->format === 'svg') {
+            $width = $pixels * $this->imagePercentage;
+            $height = $width / $this->logoRatio();
+            $left = ($pixels - $width) / 2;
+            $top = ($pixels - $height) / 2;
+        } else {
+            $width = intval($pixels * $this->imagePercentage);
+            $height = intval($width / round($this->logoRatio(), 2));
+            $left = intval($pixels / 2 - $width / 2);
+            $top = intval($pixels / 2 - $height / 2);
+        }
+
+        return array_map(
+            fn ($pixel) => $pixel / $module - $this->margin,
+            [$left, $top, $left + $width, $top + $height]
+        );
+    }
+
+    /**
+     * The width to height ratio of the merged image: a raster image or, in svg, an svg image.
+     *
+     * @return float
+     * @throws InvalidArgumentException when the merged content is not an image
+     */
+    private function logoRatio(): float
+    {
+        $info = @getimagesizefromstring($this->imageMerge);
+
+        if ($info && $info[0] && $info[1]) {
+            return $info[0] / $info[1];
+        }
+
+        if ($this->format !== 'svg') {
+            throw new InvalidArgumentException("The image merged with a {$this->format} QrCode must be a raster image PHP recognizes: png, jpeg, gif, webp...");
+        }
+
+        return (new SvgImageMerge('', $this->imageMerge))->imageRatio();
     }
 
     /**

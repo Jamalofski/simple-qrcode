@@ -1,5 +1,7 @@
 <?php
 
+use BaconQrCode\Common\ErrorCorrectionLevel;
+use BaconQrCode\Encoder\Encoder;
 use PHPUnit\Framework\TestCase;
 use SimpleSoftwareIO\QrCode\Generator;
 use SimpleSoftwareIO\QrCode\SvgImageMerge;
@@ -123,5 +125,34 @@ class SvgImageMergeTest extends TestCase
         $eps = (string) (new Generator)->format('eps')->merge(__DIR__.'/Images/simplesoftware-icon-grey-blue.png', .2, true)->generate('eps');
 
         $this->assertSame((string) (new Generator)->format('eps')->generate('eps'), $eps);
+        $this->assertSame($eps, (string) (new Generator)->format('eps')->merge(__DIR__.'/Images/simplesoftware-icon-grey-blue.png', .2, true)->clearUnderLogo()->generate('eps'));
+    }
+
+    public function test_clear_under_logo_removes_the_modules_under_an_svg_logo()
+    {
+        // An svg logo, 200 by 100: its ratio sets the height of the cleared area.
+        $logo = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><rect width="200" height="100" fill="#c00"/></svg>';
+        $text = 'https://example.com/svg';
+        $merged = fn () => (new Generator)->size(300)->mergeString($logo, .3);
+
+        // The outline of the modules has its corners on whole modules. In module units, the code
+        // is n wide and the logo 0.3 n wide and half as high, centered: no corner falls inside it.
+        $n = Encoder::encode($text, ErrorCorrectionLevel::H())->getMatrix()->getWidth();
+        $cornersUnderTheLogo = function (string $svg) use ($n): int {
+            preg_match_all('/[ML](-?[\d.]+) (-?[\d.]+)/', $svg, $corners, PREG_SET_ORDER);
+
+            return count(array_filter($corners, fn ($c) => abs($c[1] - $n / 2) < 0.15 * $n && abs($c[2] - $n / 2) < 0.075 * $n));
+        };
+
+        $covered = (string) $merged()->generate($text);
+        $cleared = (string) $merged()->clearUnderLogo()->generate($text);
+
+        $this->assertGreaterThan(0, $cornersUnderTheLogo($covered));
+        $this->assertSame(0, $cornersUnderTheLogo($cleared));
+        $this->assertSame($this->image($covered), $this->image($cleared), 'The logo itself does not change.');
+        $this->assertNotFalse(simplexml_load_string($cleared));
+
+        // Without a logo, clearUnderLogo() changes nothing.
+        $this->assertSame((string) (new Generator)->generate('plain'), (string) (new Generator)->clearUnderLogo()->generate('plain'));
     }
 }

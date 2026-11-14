@@ -54,7 +54,9 @@ One of the main items that we use this package for is to have QrCodes in all of 
 You may embed a qrcode inside of an e-mail to allow your users to quickly scan.  The following is an example of how to do this with Laravel:
 
 	//Inside of a blade template.
-	<img src="{!!$message->embedData(QrCode::format('png')->generate('Embed me into an e-mail!'), 'QrCode.png', 'image/png')!!}">
+	<img src="{!!$message->embedData((string) QrCode::format('png')->generate('Embed me into an e-mail!'), 'QrCode.png', 'image/png')!!}">
+
+With Laravel, `generate` returns an `Illuminate\Support\HtmlString`, and `embedData` only takes a string: cast it with `(string)`, as above.
 
 <a id="docs-usage"></a>
 ## Usage
@@ -102,6 +104,8 @@ Four formats are supported: `png`, `webp`, `eps` and `svg`. To change the format
 
 > Without `imagick`, `png` and `webp` are rendered with GD: square modules and square eyes only, without gradient.
 
+Square modules and square eyes are drawn without antialiasing, so that small images stay sharp. Other styles keep it with `imagick`. This needs `bacon/bacon-qr-code` 3.1 or later.
+
 A `webp` image is lossless by default, and usually smaller than the same `png`. It needs GD with WebP support, which most PHP builds have. `quality` makes it lossy, from 0 to 100; QrCodes compress so well without loss that a lossy `webp` is often larger.
 
 	QrCode::format('webp')->generate('Make me into a QrCode!'); // Lossless
@@ -118,6 +122,8 @@ You can change the size of a QrCode by using the `size` method. Simply specify t
 	QrCode::size(100);
 
 ![200 Pixels](../imgs/200-pixels.png) ![250 Pixels](../imgs/250-pixels.png) 
+
+An `svg` QrCode has a `viewBox`, so CSS can resize it: with `width: 100%; height: auto`, it follows the width of its container.
 
 #### Color `(int $red, int $green, int $blue, int $alpha = null)`
 
@@ -179,7 +185,7 @@ You may change the eye colors by using the `eyeColor` method.
 
 #### Style `(string $style, float $size = 0.5)`
 
-The style can be easily swapped out with `square`, `dot,` or `round`.  This will change the blocks within the QrCode.  The second parameter will affect the size of the dots or roundness.
+The style can be easily swapped out with `square`, `dot,` or `round`.  This will change the blocks within the QrCode.  The second parameter will affect the size of the dots or roundness: more than 0, up to 1.
 
 	QrCode::style('dot'); // Uses the `dot` style.
 
@@ -218,6 +224,18 @@ The eye within the QrCode supports four styles: `square`, `circle`, `rounded` an
 | Example | Result |
 | --- | --- |
 | `externalEye('circle')->internalEye('circle')` | ![Round ring](../imgs/circle-external-eye.png)|
+
+#### Custom Style and Eye `(ModuleInterface $module)`, `(EyeInterface $eye)`
+
+`customStyle` draws the modules with your own module, and `customEye` the eyes with your own eye, in place of `style` and `eye`. A module implements `BaconQrCode\Renderer\Module\ModuleInterface` and an eye `BaconQrCode\Renderer\Eye\EyeInterface`, from [bacon/bacon-qr-code](https://github.com/Bacon/BaconQrCode/tree/main/src/Renderer). Of `style` and `customStyle`, and of `eye` and `customEye`, the last one called wins; `externalEye` and `internalEye` still apply over a custom eye.
+
+	use BaconQrCode\Renderer\Eye\SimpleCircleEye;
+	use BaconQrCode\Renderer\Module\DotsModule;
+
+	QrCode::customStyle(new DotsModule(0.8))->customEye(SimpleCircleEye::instance());
+	QrCode::customEye(new MyEye); // Your class implementing EyeInterface
+
+>Custom modules and eyes need `imagick` in `png` and `webp`; `svg` and `eps` draw them as they are.
 
 #### Margin `(int $margin)`
 
@@ -303,6 +321,15 @@ The `merge` method merges an image over a QrCode.  This is commonly used to plac
 
 ![Merged Logo](../imgs/merged-qrcode.png)
 
+#### Clear Under Logo `(int $margin = 0)`
+
+By default, the image covers the modules under it. `clearUnderLogo` removes them instead: the image sits on the background, on an area cut along the modules, with `$margin` more modules around it. The eyes and the format information always stay.
+
+	QrCode::format('png')->merge('path-to-image.png', .2)->clearUnderLogo()->generate('Make me into a QrCode!');
+	QrCode::format('png')->merge('path-to-image.png', .2)->clearUnderLogo(1)->generate('Make me into a QrCode!'); // One module around the image
+
+>The cleared area is the image rounded out to whole modules, plus the margin, so it is larger than the image. On a short content, where the modules are large, keep the image at 20% and the margin at 0: a larger area may no longer scan.
+
 #### Merge Binary String `(string $content, float $percentage = .2)`
 
 The `mergeString` method can be used to achieve the same as the `merge` call, except it allows you to provide a string representation of the file instead of the filepath. This is usefull when working with the `Storage` facade. It's interface is quite similar to the `merge` call. 
@@ -348,6 +375,25 @@ This helper generates a scannable bitcoin to send payments.  [More information](
         'message' => 'my message',
         'returnAddress' => 'https://www.returnaddress.com'
     ]);
+
+#### Calendar Event
+
+This helper makes a calendar event (an iCalendar `VEVENT`) that a phone offers to add to its calendar.
+
+	QrCode::calendar([
+		'summary' => 'Product launch',             // Required
+		'start' => '2026-12-01 18:00',             // Required: a date string or a DateTimeInterface
+		'end' => '2026-12-01 20:00',               // Optional
+		'timezone' => 'Europe/Paris',              // Optional: the time zone of the date strings
+		'location' => 'Paris',                     // Optional
+		'description' => 'Doors open at 17:30.',   // Optional
+		'url' => 'https://example.com/launch',     // Optional
+	]);
+
+	// An all-day event, from December 1 to December 3 included
+	QrCode::calendar(['summary' => 'Conference', 'start' => '2026-12-01', 'end' => '2026-12-03', 'allDay' => true]);
+
+Times are written in UTC. A date string is read in `timezone`, or in the default time zone of PHP without it; a `DateTimeInterface` keeps its own. An all-day event takes dates only, and its `end` is its last day. For text with accents, use `encoding('UTF-8')`. An invalid event, or an unknown field, throws an `InvalidArgumentException`.
 
 #### SEPA Credit Transfer (EPC)
 
@@ -459,6 +505,7 @@ You can use a prefix found in the table below inside the `generate` section to c
 | Text (SMS) With Pretyped Message | sms: | sms::I am a pretyped message |
 | Text (SMS) With Pretyped Message and Number | sms: | sms:555-555-5555:I am a pretyped message |
 | Geo Address | geo: | geo:-78.400364,-85.916993 |
+| Calendar Event | BEGIN:VEVENT | See the calendar helper above |
 | MeCard | mecard: | MECARD:Simple, Software;Some Address, Somewhere, 20430;TEL:555-555-5555;EMAIL:support@example.com; |
 | VCard | BEGIN:VCARD | [See Examples](https://en.wikipedia.org/wiki/VCard) |
 | Wifi | wifi: | wifi:WEP/WPA;SSID;PSK;Hidden(True/False) |

@@ -73,6 +73,17 @@ class SvgImageMerge
     }
 
     /**
+     * The width to height ratio of the image to merge.
+     *
+     * @return float
+     * @throws InvalidArgumentException when the content is not an image
+     */
+    public function imageRatio(): float
+    {
+        return $this->describeImage()[1];
+    }
+
+    /**
      * The width and height of the QrCode, in the units of its viewBox.
      *
      * @return float[]

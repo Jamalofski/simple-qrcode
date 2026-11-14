@@ -2,6 +2,32 @@
 
 Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/simple-qrcode`. In each version, behavior changes, which can need a change in your code, come first. Upstream links point to [SimpleSoftwareIO/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode).
 
+## 4.5.0 (unreleased)
+
+No existing signature changes.
+
+### Behavior changes
+- With `imagick`, `png` and `webp` images whose modules and eyes are squares, the default, are drawn without antialiasing, so small images are sharp: antialiasing blurred the edges of modules that do not fall on whole pixels ([upstream #209](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/209), [#263](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/263)). The pixels change, which matters only if you compare images. This needs `bacon/bacon-qr-code` 3.1 or later; GD was already sharp.
+- `Generator` gains public methods (`clearUnderLogo`, `customStyle`, `customEye`): a subclass that already defines one of them must match its new signature.
+
+### Added
+- `clearUnderLogo()` removes the modules under a merged logo instead of covering them: the logo sits on the background, on an area cut along the modules, with an optional margin in modules around it ([upstream #192](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/192)). The eyes and the format information stay. In `png`, `webp` and `svg`; `eps` ignores the logo.
+- `customStyle()` and `customEye()` draw the modules and the eyes with your own `bacon/bacon-qr-code` module and eye ([upstream #250](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/250), [#258](https://github.com/SimpleSoftwareIO/simple-qrcode/pull/258)). In `png` and `webp`, they need `imagick`.
+- `calendar()`: a calendar event (iCalendar `VEVENT`) with times in UTC, all-day events and escaped text ([upstream #116](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/116)).
+
+### Changed
+- The archive Composer installs holds `src`, `composer.json`, the license, the readme and the changelog only: the tests, the documentation and its images are left out.
+
+### Fixed
+- `style()` takes a size of 1, which bacon accepts, and rejects a size of 0 for `dot` and `round` when it is called, where bacon failed later in `generate()` ([upstream #291](https://github.com/SimpleSoftwareIO/simple-qrcode/pull/291)). `style('square', 0)` is still accepted.
+
+### Documentation
+- The e-mail example casts the QrCode to a string: since 4.1, `generate()` returns an `HtmlString` with Laravel, and `embedData()` only takes a string ([upstream #284](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/284), [#297](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/297)).
+- An `svg` QrCode resizes with CSS, through its `viewBox` ([upstream #230](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/230)).
+
+### Thanks
+[adrum](https://github.com/adrum), [muarachmann](https://github.com/muarachmann) and [DonCamillo11](https://github.com/DonCamillo11), whose upstream pull requests ([#258](https://github.com/SimpleSoftwareIO/simple-qrcode/pull/258), [#202](https://github.com/SimpleSoftwareIO/simple-qrcode/pull/202), [#291](https://github.com/SimpleSoftwareIO/simple-qrcode/pull/291)) proposed the custom styles and eyes, the calendar event and the bounds of `style()`; and [bilogic](https://github.com/bilogic), who described in upstream #192 how to clear the modules under a logo.
+
 ## 4.4.0 (2026-11-13)
 
 No existing signature changes.

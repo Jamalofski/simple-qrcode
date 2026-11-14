@@ -36,6 +36,7 @@ Your code does not change, but a few behaviors do since 4.2. The [CHANGELOG](CHA
 - PHP 8.2 or later is required.
 - `bacon/bacon-qr-code` ^3 replaces ^2. If you use BaconQrCode classes directly, check its [changelog](https://github.com/Bacon/BaconQrCode/blob/main/CHANGELOG.md).
 - The SVG output keeps the same shapes; some path segments are written in a different order, which matters only if you compare raw SVG strings.
+- With `imagick`, square modules and eyes are drawn without antialiasing in `png` and `webp`, so small images are sharp: the pixels change, which matters only if you compare images.
 - A merged logo raises the error correction from `L` to `H` unless you set one, and `merge()` now applies to `svg` too.
 - `wiFi()` escapes `\`, `;`, `,`, `"` and `:` itself: remove your own escaping if you had one.
 

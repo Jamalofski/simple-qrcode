@@ -201,10 +201,75 @@ class GeneratorTest extends TestCase
         (new Generator)->style('round', -.1);
     }
 
-    public function test_an_exception_is_thrown_for_1()
+    public function test_the_size_of_a_style_can_be_1_and_cannot_be_0_for_dot_and_round()
     {
+        // bacon takes a size more than 0 and up to 1 (upstream pull request #291).
+        $this->assertInstanceOf(RoundnessModule::class, (new Generator)->style('round', 1)->getModule());
+        $this->assertInstanceOf(DotsModule::class, (new Generator)->style('dot', 1)->getModule());
+        $this->assertInstanceOf(SquareModule::class, (new Generator)->style('square', 0)->getModule());
+
+        foreach (['dot', 'round'] as $style) {
+            try {
+                (new Generator)->style($style, 0);
+                $this->fail("style('{$style}', 0) was accepted.");
+            } catch (InvalidArgumentException $e) {
+                $this->assertStringContainsString('more than 0 for dot and round', $e->getMessage());
+            }
+        }
+    }
+
+    public function test_a_custom_module_and_a_custom_eye_are_used()
+    {
+        $module = new DotsModule(0.7);
+        $eye = PointyEye::instance();
+        $generator = (new Generator)->style('round')->eye('circle')->customStyle($module)->customEye($eye);
+
+        $this->assertSame($module, $generator->getModule());
+        $this->assertSame($eye, $generator->getEye());
+
+        // externalEye() and internalEye() apply over a custom eye, as over eye().
+        $composite = (clone $generator)->externalEye('circle')->getEye();
+        $this->assertEquals(CircleEye::instance()->getExternalPath(), $composite->getExternalPath());
+        $this->assertEquals($eye->getInternalPath(), $composite->getInternalPath());
+
+        // Without an eye, the eyes are drawn with the custom module, as with style().
+        $this->assertEquals(new ModuleEye($module), (new Generator)->customStyle($module)->getEye());
+    }
+
+    public function test_the_last_call_wins_between_style_and_custom_style_and_between_eye_and_custom_eye()
+    {
+        $generator = (new Generator)->customStyle(new DotsModule(0.7))->customEye(PointyEye::instance())->style('round', .4)->eye('circle');
+
+        $this->assertInstanceOf(RoundnessModule::class, $generator->getModule());
+        $this->assertInstanceOf(SimpleCircleEye::class, $generator->getEye());
+    }
+
+    public function test_clear_under_logo_takes_a_margin_of_0_or_more()
+    {
+        $this->assertInstanceOf(Generator::class, (new Generator)->clearUnderLogo()->clearUnderLogo(2));
+
         $this->expectException(InvalidArgumentException::class);
-        (new Generator)->style('round', 1);
+        (new Generator)->clearUnderLogo(-1);
+    }
+
+    public function test_square_modules_and_eyes_are_drawn_without_antialiasing()
+    {
+        if (! extension_loaded('imagick')) {
+            $this->markTestSkipped('The imagick extension is not installed.');
+        }
+
+        $antialias = fn (Generator $g) => (fn () => $this->antialias)->call($g->format('png')->getFormatter());
+
+        $this->assertFalse($antialias(new Generator));
+        $this->assertFalse($antialias((new Generator)->eye('square')));
+        $this->assertFalse($antialias((new Generator)->externalEye('square')->internalEye('square')));
+        $this->assertFalse($antialias((new Generator)->gradient(0, 0, 0, 0, 0, 255, 'vertical')));
+
+        $this->assertTrue($antialias((new Generator)->style('dot')));
+        $this->assertTrue($antialias((new Generator)->eye('circle')));
+        $this->assertTrue($antialias((new Generator)->internalEye('pointy')));
+        $this->assertTrue($antialias((new Generator)->customStyle(new DotsModule(0.5))));
+        $this->assertTrue($antialias((new Generator)->customEye(RoundedEye::instance())));
     }
 
     public function test_get_renderer_returns_renderer()
