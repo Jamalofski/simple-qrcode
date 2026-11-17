@@ -2,7 +2,7 @@
 
 Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/simple-qrcode`. In each version, behavior changes, which can need a change in your code, come first. Upstream links point to [SimpleSoftwareIO/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode).
 
-## 4.5.1 (unreleased)
+## 4.5.1 (2026-11-17)
 
 ### Changed
 - A content too long for a QR code throws a `WriterException` that says so: its size in bytes, the error correction it was encoded at, a merged logo raising it to `H`, and the capacity of the largest QR code at each level ([upstream #282](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/282)). It was bacon's bare "Data too big", which stays available as the previous exception.
