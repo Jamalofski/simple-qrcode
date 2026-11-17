@@ -44,6 +44,8 @@ in favour of this fork, or transferred.
   `awk -v v=4.4.0 'index($0, "## " v " ") == 1 {f=1; next} /^## / && f {exit} f' CHANGELOG.md`.
 - The README describes the package as it is, with no list of what a version adds; its
   "Migrating" section lists the behavior changes since 4.2.
+- `SECURITY.md` lists the latest minor version as the supported one: update it with each
+  minor release (it still said 4.3.x after 4.5.0).
 
 ## Local test setup (Windows)
 

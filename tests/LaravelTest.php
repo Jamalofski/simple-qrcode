@@ -38,4 +38,17 @@ class LaravelTest extends TestCase
 
         $this->assertStringContainsString('<svg', $html);
     }
+
+    public function test_merge_reads_a_path_relative_to_the_base_path_with_or_without_a_leading_slash()
+    {
+        $this->app->setBasePath(__DIR__);
+        $logo = base64_encode(file_get_contents(__DIR__.'/Images/simplesoftware-icon-grey-blue.png'));
+
+        // Without the leading slash, merge() looked for <base path>Images/... and failed.
+        foreach (['Images/simplesoftware-icon-grey-blue.png', '/Images/simplesoftware-icon-grey-blue.png'] as $path) {
+            $svg = (string) QrCode::size(200)->merge($path, .2)->generate('relative path');
+
+            $this->assertStringContainsString('data:image/png;base64,'.$logo, $svg, $path);
+        }
+    }
 }

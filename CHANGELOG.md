@@ -2,6 +2,17 @@
 
 Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/simple-qrcode`. In each version, behavior changes, which can need a change in your code, come first. Upstream links point to [SimpleSoftwareIO/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode).
 
+## 4.5.1 (unreleased)
+
+### Changed
+- A content too long for a QR code throws a `WriterException` that says so: its size in bytes, the error correction it was encoded at, a merged logo raising it to `H`, and the capacity of the largest QR code at each level ([upstream #282](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/282)). It was bacon's bare "Data too big", which stays available as the previous exception.
+
+### Fixed
+- `merge()` reads a path relative to the base path of the application without a leading slash, such as `public/logo.png`: it looked for `<base path>public/logo.png`. The examples of the documentation had no leading slash. A path with one gives the same file as before.
+
+### Documentation
+- `SECURITY.md` lists 4.5.x as the supported version; it still listed 4.3.x.
+
 ## 4.5.0 (2026-11-14)
 
 No existing signature changes.

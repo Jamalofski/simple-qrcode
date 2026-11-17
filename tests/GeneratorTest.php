@@ -1,5 +1,6 @@
 <?php
 
+use BaconQrCode\Exception\WriterException;
 use BaconQrCode\Renderer\Color\Alpha;
 use BaconQrCode\Renderer\Eye\CompositeEye;
 use BaconQrCode\Renderer\Eye\ModuleEye;
@@ -242,6 +243,35 @@ class GeneratorTest extends TestCase
 
         $this->assertInstanceOf(RoundnessModule::class, $generator->getModule());
         $this->assertInstanceOf(SimpleCircleEye::class, $generator->getEye());
+    }
+
+    public function test_a_content_too_long_says_why()
+    {
+        // Upstream #282: a vCard with a base64 photo failed with bacon's bare "Data too big".
+        try {
+            (new Generator)->generate(str_repeat('a', 3000));
+            $this->fail('3000 bytes were accepted.');
+        } catch (WriterException $e) {
+            $this->assertStringContainsString('too long for a QR code: 3000 bytes at error correction L.', $e->getMessage());
+            $this->assertStringContainsString('2,953 bytes of text at L', $e->getMessage());
+            $this->assertSame('Data too big', $e->getPrevious()->getMessage());
+        }
+
+        $logo = file_get_contents(__DIR__.'/Images/simplesoftware-icon-grey-blue.png');
+
+        try {
+            (new Generator)->mergeString($logo)->generate(str_repeat('a', 1300));
+            $this->fail('1300 bytes were accepted at H.');
+        } catch (WriterException $e) {
+            $this->assertStringContainsString('1300 bytes at error correction H, the level a merged logo uses', $e->getMessage());
+        }
+
+        try {
+            (new Generator)->errorCorrection('Q')->generate(str_repeat('a', 1700));
+            $this->fail('1700 bytes were accepted at Q.');
+        } catch (WriterException $e) {
+            $this->assertStringContainsString('1700 bytes at error correction Q.', $e->getMessage());
+        }
     }
 
     public function test_clear_under_logo_takes_a_margin_of_0_or_more()

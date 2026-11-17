@@ -311,7 +311,7 @@ The `merge` method merges an image over a QrCode.  This is commonly used to plac
 	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
 
 >The `merge` method works with the `png`, `webp` and `svg` formats; `eps` ignores it.
->The filepath is relative to app base path if `$absolute` is set to `false`.  Change this variable to `true` to use absolute paths.
+>The filepath is relative to app base path if `$absolute` is set to `false`, with or without a leading slash: `public/logo.png` and `/public/logo.png` are the same file.  Change this variable to `true` to use absolute paths.
 
 >In `svg`, the image is embedded in the QrCode as a data URI. It can be any raster image PHP recognizes (png, jpeg, gif, webp...) or an svg image. Browsers show an svg logo; a few converters, such as old versions of librsvg, leave it out: use a png logo for them.
 

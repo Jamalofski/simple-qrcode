@@ -266,7 +266,11 @@ class Generator
         $errorCorrection = $this->errorCorrection
             ?? ($this->imageMerge !== null && $this->format !== 'eps' ? ErrorCorrectionLevel::H() : null);
 
-        $qrCode = $writer->writeString($text, $this->encoding, $errorCorrection);
+        try {
+            $qrCode = $writer->writeString($text, $this->encoding, $errorCorrection);
+        } catch (WriterException $e) {
+            throw $e->getMessage() === 'Data too big' ? $this->tooLong($text, $errorCorrection, $e) : $e;
+        }
 
         if ($this->rendersIntermediatePng()) {
             $qrCode = $this->finishRasterImage($qrCode);
@@ -299,8 +303,10 @@ class Generator
      */
     public function merge(string $filepath, float $percentage = .2, bool $absolute = false): self
     {
+        // base_path() joins the two with a separator: 'public/logo.png' works as well as
+        // '/public/logo.png', where base_path().$filepath needed the leading slash.
         if (function_exists('base_path') && ! $absolute) {
-            $filepath = base_path().$filepath;
+            $filepath = base_path($filepath);
         }
 
         $this->imageMerge = file_get_contents($filepath);
@@ -977,6 +983,28 @@ class Generator
         imagewebp($image, null, $this->quality ?? (defined('IMG_WEBP_LOSSLESS') ? IMG_WEBP_LOSSLESS : 101));
 
         return ob_get_clean();
+    }
+
+    /**
+     * Says why bacon's "Data too big" happened: the content goes beyond the largest QR code.
+     *
+     * @param string $text
+     * @param ErrorCorrectionLevel|null $errorCorrection
+     * @param WriterException $previous
+     * @return WriterException
+     */
+    private function tooLong(string $text, ?ErrorCorrectionLevel $errorCorrection, WriterException $previous): WriterException
+    {
+        $level = ($errorCorrection ?? ErrorCorrectionLevel::L())->name();
+        $logo = $this->errorCorrection === null && $level === 'H' ? ', the level a merged logo uses unless you set one' : '';
+
+        return new WriterException(
+            "The content is too long for a QR code: ".strlen($text)." bytes at error correction {$level}{$logo}. "
+            .'The largest QR code holds 2,953 bytes of text at L, 2,331 at M, 1,663 at Q and 1,273 at H. '
+            .'Shorten the content, for example with a link to it, or lower the error correction.',
+            0,
+            $previous
+        );
     }
 
     /**
