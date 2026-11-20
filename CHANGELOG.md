@@ -2,6 +2,13 @@
 
 Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/simple-qrcode`. In each version, behavior changes, which can need a change in your code, come first. Upstream links point to [SimpleSoftwareIO/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode).
 
+## 4.5.2 (2026-11-20)
+
+No code change: PHP 8.6, released on 2026-11-19, is tested with Laravel 12 and 13, `png` with and without `imagick`. Laravel 11 does not support it, as with PHP 8.5. `composer.json` already allowed PHP 8.6, so 4.5.1 installs on it too.
+
+### Documentation
+- The README lists PHP 8.2 to 8.6.
+
 ## 4.5.1 (2026-11-17)
 
 ### Changed
