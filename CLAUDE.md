@@ -28,7 +28,10 @@ in favour of this fork, or transferred.
   then ask for the go in one question.
 - Tests run locally (`composer test`). The `Tests` workflow (PHP 8.2-8.6 x Laravel 11-13) is
   `workflow_dispatch` only, run by hand before a release; nothing runs on push. To check a
-  fix, run a subset: `gh workflow run tests.yml -f php='["8.4"]' -f laravel='["13"]'`.
+  fix, run a subset:
+  `gh workflow run tests.yml -R Jamalofski/simple-qrcode -f php='["8.4"]' -f laravel='["13"]'`.
+  Always pass `-R` to `gh` here: with the `upstream` remote, gh targets
+  SimpleSoftwareIO/simple-qrcode otherwise (20/11/2026, a dispatch that answered 404).
 - Actions stay pinned by commit SHA.
 
 ## Changelog, releases and README
