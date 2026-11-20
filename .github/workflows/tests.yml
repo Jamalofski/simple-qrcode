@@ -7,7 +7,7 @@ on:
     inputs:
       php:
         description: PHP versions, as a JSON list
-        default: '["8.2", "8.3", "8.4", "8.5"]'
+        default: '["8.2", "8.3", "8.4", "8.5", "8.6"]'
       laravel:
         description: Laravel versions, as a JSON list
         default: '["11", "12", "13"]'
@@ -28,6 +28,8 @@ jobs:
           - php: '8.2'
             laravel: '13'
           - php: '8.5'
+            laravel: '11'
+          - php: '8.6'
             laravel: '11'
 
     steps:

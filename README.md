@@ -6,7 +6,7 @@ Simple QrCode
 The maintained successor of [simplesoftwareio/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode): same namespace, same facade, same API. Swap the package, keep your code.
 
 [![Latest version](https://img.shields.io/packagist/v/jamalofski/simple-qrcode)](https://packagist.org/packages/jamalofski/simple-qrcode)
-![PHP 8.2 to 8.5](https://img.shields.io/badge/PHP-8.2%20to%208.5-777bb4)
+![PHP 8.2 to 8.6](https://img.shields.io/badge/PHP-8.2%20to%208.6-777bb4)
 ![Laravel 11 to 13](https://img.shields.io/badge/Laravel-11%20to%2013-ff2d20)
 [![License](https://img.shields.io/packagist/l/jamalofski/simple-qrcode)](LICENSE)
 
@@ -43,7 +43,7 @@ Each one with `size(400)->margin(1)`, in `svg`. Every code above scans.
 
 The original package has had no release since 4.2.0 (February 2021). It requires `bacon/bacon-qr-code` ^2, while `laravel/fortify` requires ^3: it can no longer be installed next to Fortify or the official Laravel starter kits. This fork fixes that, and keeps going.
 
-- **Installs where the original cannot.** `bacon/bacon-qr-code` ^3, PHP 8.2 to 8.5, Laravel 11 to 13, each supported combination tested.
+- **Installs where the original cannot.** `bacon/bacon-qr-code` ^3, PHP 8.2 to 8.6, Laravel 11 to 13, each supported combination tested.
 - **A drop-in replacement.** Same namespace (`SimpleSoftwareIO\QrCode`), same `QrCode` facade, same API. It declares `replace` for `simplesoftwareio/simple-qrcode`, so packages that depend on the original name keep working, and its version numbers continue from the original.
 - **Fixes what stayed open for years.** Logos in `svg`, transparent backgrounds turning black under a logo, blurry small `png`, `png` without `imagick`, Wi-Fi passwords with special characters, `+` signs in e-mail codes.
 - **Adds what users asked for.** Modules cleared under a logo, rounded and pointy eyes with the ring and the center styled apart, hex colors, `webp`, SEPA payment and calendar codes, your own module and eye shapes.
