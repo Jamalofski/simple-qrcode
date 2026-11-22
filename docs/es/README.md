@@ -1,4 +1,6 @@
 
+> Esta traducción es anterior a la versión 4 y está desactualizada: faltan algunas secciones y otras ya no son correctas. La referencia es la [documentación en inglés](../en/README.md).
+
 
 - [Introducción](#docs-introduction)
 - [Traducciones](#docs-translations)
@@ -185,13 +187,13 @@ El método `merge` une una imagen con un QrCode.  Normalmente se usa para añadi
 	QrCode::merge($filename, $percentage, $absolute);
 	
 	//Genera un QrCode con una imagen en el centro.
-	QrCode::format('png')->merge('path-to-image.png')->generate();
+	QrCode::format('png')->merge('path-to-image.png')->generate('Make me into a QrCode!');
 	
 	//Genera un QrCode con una imagen en el centro.  La imagen ocupa un 30% del QrCode.
-	QrCode::format('png')->merge('path-to-image.png', .3)->generate();
+	QrCode::format('png')->merge('path-to-image.png', .3)->generate('Make me into a QrCode!');
 	
 	//Genera un QrCode con una imagen en el centro.  La imagen ocupa un 30% del QrCode.
-	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate('Make me into a QrCode!');
 
 >El método `merge` sólo es compatible con PNG de momento.
 >El path del archivo es relativo al path de la app si `$absolute` equivale a `false`.  Cambia esta variable a `true` para usar paths absolutos.
@@ -207,10 +209,10 @@ El método `mergeString` se puede usar para conseguir el mismo resultado que con
 	QrCode::mergeString(Storage::get('path/to/image.png'), $percentage);
 	
 	//Genera un QrCode con una imagen en el centro.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate('Make me into a QrCode!');
 	
 	//Genera un QrCode con una imagen en el centro.  La imagen ocupa un 30% del QrCode.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate('Make me into a QrCode!');
 
 >Igual que con `merge`, sólo PNG de momento. Lo mismo que con el nivel de corrección de error, alto nivel está recomendado.
 

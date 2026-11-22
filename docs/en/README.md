@@ -302,20 +302,20 @@ You can change this to any of the following:
 The `merge` method merges an image over a QrCode.  This is commonly used to placed logos within a QrCode.
 
 	//Generates a QrCode with an image centered in the middle.
-	QrCode::format('png')->merge('path-to-image.png')->generate();
+	QrCode::format('png')->merge('path-to-image.png')->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->merge('path-to-image.png', .3)->generate();
+	QrCode::format('png')->merge('path-to-image.png', .3)->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate('Make me into a QrCode!');
 
 >The `merge` method works with the `png`, `webp` and `svg` formats; `eps` ignores it.
 >The filepath is relative to app base path if `$absolute` is set to `false`, with or without a leading slash: `public/logo.png` and `/public/logo.png` are the same file.  Change this variable to `true` to use absolute paths.
 
 >In `svg`, the image is embedded in the QrCode as a data URI. It can be any raster image PHP recognizes (png, jpeg, gif, webp...) or an svg image. Browsers show an svg logo; a few converters, such as old versions of librsvg, leave it out: use a png logo for them.
 
-	QrCode::errorCorrection('H')->merge('path-to-logo.svg', .25)->generate(); // svg QrCode with an svg logo
+	QrCode::errorCorrection('H')->merge('path-to-logo.svg', .25)->generate('Make me into a QrCode!'); // svg QrCode with an svg logo
 
 >A logo hides part of the QrCode: at the default error correction, `L`, most codes no longer read behind it. Unless you set a level with `errorCorrection`, the `merge` method raises it to `H`, the highest.
 
@@ -335,10 +335,10 @@ By default, the image covers the modules under it. `clearUnderLogo` removes them
 The `mergeString` method can be used to achieve the same as the `merge` call, except it allows you to provide a string representation of the file instead of the filepath. This is usefull when working with the `Storage` facade. It's interface is quite similar to the `merge` call. 
 
 	//Generates a QrCode with an image centered in the middle.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate('Make me into a QrCode!');
 
 >As with the normal `merge` call, it works with `png`, `webp` and `svg`, and raises the error correction to `H` unless you set one.
 

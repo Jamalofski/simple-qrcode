@@ -1,4 +1,6 @@
 
+> この翻訳はバージョン 4 より前のもので、内容が古くなっています。一部のセクションが欠けているか、正しくなくなっています。最新の内容は[英語のドキュメント](../en/README.md)を参照してください。
+
 #### [Deutsch](../de/README.md) | [Español](../es/README.md) | [Français](../fr/README.md) | [Italiano](../it/README.md) | [Português](../pt-br/README.md) | [Русский](../ru/README.md) | [日本語](../ja/README.md) | [한국어](../kr/README.md) | [हिंदी](../hi/README.md) | [简体中文](../zh-cn/README.md) | [العربية](../ar/README.md)
 
 - [イントロダクション](#docs-introduction)
@@ -266,13 +268,13 @@ QRコードの生成に使われる文字コードを変更します。デフォ
 `merge`メソッドはQRコードの上に画像を重ね合わせます。この機能は主にQRコードの中にロゴなどを配置する目的で使われます。
 
     //中央に画像を配置したQRコードを生成します
-	QrCode::format('png')->merge('path-to-image.png')->generate();
+	QrCode::format('png')->merge('path-to-image.png')->generate('Make me into a QrCode!');
 	
     //中央に画像を配置したQRコードを生成します。配置された画像は最大でQRコードの大きさの30%になります。
-	QrCode::format('png')->merge('path-to-image.png', .3)->generate();
+	QrCode::format('png')->merge('path-to-image.png', .3)->generate('Make me into a QrCode!');
 	
     //中央に画像を配置したQRコードを生成します。配置された画像は最大でQRコードの大きさの30%になります。
-	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate('Make me into a QrCode!');
 
 > `merge`メソッドは現在のところPNGファイルのみをサポートしています。
 > 引数`$absolute`が`false`の場合はファイルパスはプロジェクトルートからの相対パスとして認識されます。絶対パスで指定する場合は`true`を指定してください。
@@ -286,10 +288,10 @@ QRコードの生成に使われる文字コードを変更します。デフォ
 `mergeString`メソッドは、ファイルを指定する代わりにバイナリ文字列を受け取る点を除いては`merge`メソッドと同様の挙動になります。
 
 	// 中央に画像を配置したQRコードを生成します
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate('Make me into a QrCode!');
 	
 	// 中央に画像を配置したQRコードを生成します。配置された画像は最大でQRコードの大きさの30%になります。
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate('Make me into a QrCode!');
 
 > `merge`メソッドと同様に、現時点ではPNG形式のみサポートしています。エラー訂正についても同様にHレベルを推奨します。
 

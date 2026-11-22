@@ -24,6 +24,9 @@ in favour of this fork, or transferred.
 
 - Trunk-based: commit on `main`, no pull request unless asked. A session branch is deleted
   once merged.
+- Commit messages are in English, like the code, the CHANGELOG and the releases: the
+  repository is public. The commits from 13/11 to 22/11/2026 are in French and stay as they
+  are, since rewriting them would change the commits the release tags point to.
 - A go on a change means commit, merge on `main` and push, in one step. Without a go: commit,
   then ask for the go in one question.
 - Tests run locally (`composer test`), with the static analysis (`composer analyse`, PHPStan

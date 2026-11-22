@@ -5,11 +5,15 @@ Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/sim
 ## 4.5.3 (unreleased)
 
 ### Fixed
+- `BTC()` writes amounts in decimal notation, to the satoshi: amounts under 0.0001 BTC came out as `1.0E-5`, which wallets do not read under BIP 21, and some others as `0.30000000000000004`.
+- `wiFi()` takes `hidden` as a boolean: `true` and `false` came out as `H:1` and `H:`, which readers do not understand; they are written `H:true` and `H:false`. The strings `'true'` and `'false'` work as before.
 - `merge()` with a file that cannot be read, and a merged content that is not an image in `png` and `webp` (text, an empty string or an svg logo), throw an `InvalidArgumentException` that says so. They raised a PHP warning, then failed further on, with a `TypeError` outside Laravel.
 - A call to a helper that does not exist names it, as in `Call to undefined method SimpleSoftwareIO\QrCode\Generator::notReal().`: the `BadMethodCallException` had no message.
 
 ### Documentation
 - The French documentation is up to date with the English one; it predated version 4.
+- The other translations, which predate version 4, open with a notice, in their language, that points to the English documentation.
+- The `merge()` and `mergeString()` examples call `generate()` with a text, in every language: without one, they failed with an `ArgumentCountError`.
 - The documentation no longer says that iPhones cannot read Wi-Fi QrCodes: their Camera app does since iOS 11.
 - The PHPDoc of the source is corrected and completed, for IDEs and static analysis: the nullable properties of the helpers, `GdImage` in place of `resource` in `Image`, the parameter, return and array types, and the type `SimpleSoftwareIO\QrCode\boolean`, which did not exist, on `merge()`. PHPStan now checks the source at level 7.
 

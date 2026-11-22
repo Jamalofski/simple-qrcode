@@ -30,6 +30,24 @@ class BTCTest extends TestCase
         $this->assertEquals($properFormat, strval($this->btc));
     }
 
+    public function test_amounts_are_written_in_decimal_to_the_satoshi()
+    {
+        // PHP writes 0.00001 as 1.0E-5, which BIP 21 does not read.
+        foreach ([
+            ['0.00001', 0.00001],
+            ['0.00000001', 0.00000001],
+            ['0.3', 0.1 + 0.2],
+            ['21000000', 21000000],
+            ['1.5', 1.5],
+            ['0.00001', '0.00001'],
+        ] as [$expected, $amount]) {
+            $btc = new BTC;
+            $btc->create(['btcaddress', $amount]);
+
+            $this->assertSame("bitcoin:btcaddress?amount={$expected}", (string) $btc, var_export($amount, true));
+        }
+    }
+
     public function test_spaces_are_encoded_as_percent_20_not_plus()
     {
         // BIP 21 uses RFC 3986 percent-encoding.

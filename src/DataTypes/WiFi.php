@@ -89,7 +89,9 @@ class WiFi implements DataTypeInterface
             $wifi .= 'P:'.$this->escape($this->password).$this->separator;
         }
         if (isset($this->hidden)) {
-            $wifi .= 'H:'.$this->hidden.$this->separator;
+            // Readers expect true or false: PHP writes the booleans as 1 and an empty string.
+            $hidden = is_bool($this->hidden) ? ($this->hidden ? 'true' : 'false') : $this->hidden;
+            $wifi .= 'H:'.$hidden.$this->separator;
         }
 
         return $wifi;

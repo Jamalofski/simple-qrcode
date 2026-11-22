@@ -1,4 +1,6 @@
 
+> यह अनुवाद संस्करण 4 से पहले का है और पुराना हो चुका है: कुछ खंड इसमें नहीं हैं और कुछ अब सही नहीं हैं। सही जानकारी के लिए [अंग्रेज़ी दस्तावेज़](../en/README.md) देखें।
+
 
 - [परिचय](#docs-introduction)
 - [अनुवाद](#docs-translations)
@@ -184,13 +186,13 @@ Generate QrCode बनाने के काम आता है।
 	QrCode::merge($filename, $percentage, $absolute);
 	
 	//Generates a QrCode with an image centered in the middle.
-	QrCode::format('png')->merge('path-to-image.png')->generate();
+	QrCode::format('png')->merge('path-to-image.png')->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->merge('path-to-image.png', .3)->generate();
+	QrCode::format('png')->merge('path-to-image.png', .3)->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate('Make me into a QrCode!');
 
 >`मर्`ज विधि में अभी केवल PNG ही समर्थित है।
 >filepath app, base path से सापेक्षित है यदि `$absolute` सेट है `false` पर।  इसे `true` से बदलें absolute paths पाने के लिए।
@@ -206,10 +208,10 @@ Generate QrCode बनाने के काम आता है।
 	QrCode::mergeString(Storage::get('path/to/image.png'), $percentage);
 	
 	//Generates a QrCode with an image centered in the middle.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate('Make me into a QrCode!');
 
 >As with the normal `merge` call, only PNG is supported at this time. The same applies for error correction, high levels are recommened.
 

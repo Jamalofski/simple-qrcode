@@ -1,4 +1,6 @@
 
+> Этот перевод сделан до версии 4 и устарел: некоторых разделов в нём нет, а другие больше не верны. Актуальна [документация на английском](../en/README.md).
+
 
 - [Введение](#docs-introduction)
 - [Переводы](#docs-translations)
@@ -254,12 +256,12 @@ QrCode::encoding('UTF-8')->generate('‘Lorem ipsum со специальным�
 QrCode::merge($filename, $percentage, $absolute);
 
 // Создает QR-код с изображением в центре
-QrCode::format('png')->merge('path-to-image.png')->generate();
+QrCode::format('png')->merge('path-to-image.png')->generate('Make me into a QrCode!');
 
 // Создает QR-код с изображением в центре
 // Вставленное изображение занимает 30% QR-кода
-QrCode::format('png')->merge('path-to-image.png', .3)->generate();
-QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
+QrCode::format('png')->merge('path-to-image.png', .3)->generate('Make me into a QrCode!');
+QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate('Make me into a QrCode!');
 ```
 
 > На данный момент метод `merge()` поддерживает только PNG.

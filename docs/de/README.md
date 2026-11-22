@@ -1,4 +1,6 @@
 
+> Diese Übersetzung stammt aus der Zeit vor Version 4 und ist veraltet: Einige Abschnitte fehlen oder sind nicht mehr korrekt. Maßgeblich ist die [englische Dokumentation](../en/README.md).
+
 #### [Deutsch](../de/README.md) | [Español](../es/README.md) | [Français](../fr/README.md) | [Italiano](../it/README.md) | [Português](../pt-br/README.md) | [Русский](../ru/README.md) | [日本語](../ja/README.md) | [한국어](../kr/README.md) | [हिंदी](../hi/README.md) | [简体中文](../zh-cn/README.md)
 
 - [Einführung](#docs-introduction)
@@ -255,13 +257,13 @@ Die folgenden Kodierungen werden unterstützt:
 Die `merge` Methode passt ein Bild in einen QrCode ein.  Üblicherweise wird dies verwendet, um ein Logo in einem QrCode anzuzeigen.
 
 	// Generiert einen QrCode mit einem mittig zentrierten Bild.
-	QrCode::format('png')->merge('pfad-zur-bilddatei.png')->generate();
+	QrCode::format('png')->merge('pfad-zur-bilddatei.png')->generate('Make me into a QrCode!');
 	
 	// Generiert einen QrCode mit einem mittig zentrierten Bild.  Das Bild nimmt dabei 30% des QrCodes ein.
-	QrCode::format('png')->merge('pfad-zur-bilddatei.png', .3)->generate();
+	QrCode::format('png')->merge('pfad-zur-bilddatei.png', .3)->generate('Make me into a QrCode!');
 	
 	// Generiert einen QrCode mit einem mittig zentrierten Bild.  Das Bild nimmt dabei 30% des QrCodes ein.
-	QrCode::format('png')->merge('http://www.google.com/irgendeinbild.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/irgendeinbild.png', .3, true)->generate('Make me into a QrCode!');
 
 >Die `merge` Methode unterstützt derzeit ausschließlich Bilder im PNG Format.
 >Der Dateipfad muss relativ zum Basispfad der App angegeben werden, solange `$absolute` auf `false` gesetzt ist.  Ein absoluter Dateipfad wird erwartet, wenn der Parameter auf `true` gesetzt wird.
@@ -275,10 +277,10 @@ Die `merge` Methode passt ein Bild in einen QrCode ein.  Üblicherweise wird die
 Die `mergeString` Methode entspricht der `merge` Methode, erlaubt aber abweichend den Inhalt einer Bilddatei als String zu übergeben. Dies ist besonders hilfreich, wenn mit der `Storage` Facade gearbeitet wird.   
 
 	// Generiert einen QrCode mit einem mittig zentrierten Bild.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate('Make me into a QrCode!');
 	
 	// Generiert einen QrCode mit einem mittig zentrierten Bild.  Das Bild nimmt dabei 30% des QrCodes ein.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate('Make me into a QrCode!');
 
 >Wie auch bei `merge` werden derzeit nur Daten im PNG Format unterstützt. Ebenso wird auch hier die Verwendung einer hohen Fehlerkorrekturstufe empfohlen. 
 

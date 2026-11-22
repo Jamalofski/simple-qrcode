@@ -1,4 +1,6 @@
 
+> 本翻译早于第 4 版，内容已过时：部分章节缺失，部分内容已不再准确。请以[英文文档](../en/README.md)为准。
+
 
 - [介绍](#docs-introduction)
 - [升级指南](#docs-upgrade)
@@ -235,13 +237,13 @@ QrCode 创建二维码时可以使用不同的编码.  默认使用 `ISO-8859-1`
  `merge` 方法可以让QrCode为生成结果加上图片.  常见的用法是在二维码上加Logo.
 
 	//生成中间有图片的二维码
-	QrCode::format('png')->merge('path-to-image.png')->generate();
+	QrCode::format('png')->merge('path-to-image.png')->generate('Make me into a QrCode!');
 
 	//生成中间有图片的二维码,且图片占整个二维码图片的30%.
-	QrCode::format('png')->merge('path-to-image.png', .3)->generate();
+	QrCode::format('png')->merge('path-to-image.png', .3)->generate('Make me into a QrCode!');
 
 	//生成中间有图片的二维码,且图片占整个二维码图片的30%.
-	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate('Make me into a QrCode!');
 
 > `merge` 方法当前只支持PNG格式的图片
 > 默认使用相对于应用程序的根路径,把第三个参数设置为 `true` 就能切换到使用绝对路径
@@ -255,10 +257,10 @@ QrCode 创建二维码时可以使用不同的编码.  默认使用 `ISO-8859-1`
  `mergeString` 方法与 `merge` 方法类似, 不同的是它允许你使用一个二进制的String代替图片文件. 这在使用 `Storage` 存储时,会显得很方便. 它的参数与 `merge` 类似.
 
 	//生成中间有图片的二维码
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate('Make me into a QrCode!');
 
 	//生成中间有图片的二维码,且图片占整个二维码图片的30%.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate('Make me into a QrCode!');
 
 > 和 `merge` 方法一样,当前只支持PNG格式. 同样建议将二维码的容错级别提高.
 

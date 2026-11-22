@@ -24,7 +24,7 @@ class BTC implements DataTypeInterface
     /**
      * The amount to send, in BTC.
      *
-     * @var float|string|null
+     * @var float|int|string|null
      */
     protected $amount;
 
@@ -120,14 +120,26 @@ class BTC implements DataTypeInterface
     protected function buildBitCoinString()
     {
         $query = http_build_query([
-            'amount'    => $this->amount,
+            'amount'    => is_float($this->amount) || is_int($this->amount) ? $this->decimal($this->amount) : $this->amount,
             'label'     => $this->label,
-            'message'  => $this->message,
+            'message'   => $this->message,
             'r'         => $this->returnAddress,
         ], '', '&', PHP_QUERY_RFC3986);
 
         $btc = $this->prefix.$this->address.'?'.$query;
 
         return $btc;
+    }
+
+    /**
+     * Writes an amount in decimal notation, to the satoshi: BIP 21 does not read 1.0E-5, which
+     * PHP writes for amounts under 0.0001.
+     *
+     * @param float|int $amount
+     * @return string
+     */
+    private function decimal($amount): string
+    {
+        return rtrim(rtrim(number_format((float) $amount, 8, '.', ''), '0'), '.');
     }
 }

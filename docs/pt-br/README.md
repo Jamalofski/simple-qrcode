@@ -1,4 +1,6 @@
 
+> Esta tradução é anterior à versão 4 e está desatualizada: algumas seções estão faltando e outras não estão mais corretas. A referência é a [documentação em inglês](../en/README.md).
+
 
 - [Introdução](#docs-introduction)
 - [Traduções](#docs-translations)
@@ -185,13 +187,13 @@ O método `merge` mescla uma imagem sobre um Qrcode. É comumente usado para se 
 	QrCode::merge($filename, $percentage, $absolute);
 	
 	// Gera um QrCode com uma imagem centralizada.
-	QrCode::format('png')->merge('diretório/da/imagem.png')->generate();
+	QrCode::format('png')->merge('diretório/da/imagem.png')->generate('Make me into a QrCode!');
 	
 	// Gera um QrCode com uma imagem centralizada. A imagem inserida ocupará 30% do QrCode.
-	QrCode::format('png')->merge('diretório/da/imagem.png', .3)->generate();
+	QrCode::format('png')->merge('diretório/da/imagem.png', .3)->generate('Make me into a QrCode!');
 	
 	// Gera um QrCode com uma imagem centralizada. A imagem inserida ocupará 30% do QrCode.
-	QrCode::format('png')->merge('http://www.google.com/algumaImagem.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/algumaImagem.png', .3, true)->generate('Make me into a QrCode!');
 
 >O método `merge` suporta somente arquivos do tipo PNG.
 >O diretório da imagem é relativo ao caminho base da aplicação, se o `$absolute` estiver setada para `false`. Altere essa variável para `true` para usar caminhos absolutos.
@@ -207,10 +209,10 @@ O método `mergeString` pode ser usado para alcançar a mesma chamada do método
 	QrCode::mergeString(Storage::get('diretório/da/imagem.png'), $percentage);
 	
 	// Gera um QrCode com uma imagem centralizada.
-	QrCode::format('png')->mergeString(Storage::get('diretório/da/imagem.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('diretório/da/imagem.png'))->generate('Make me into a QrCode!');
 	
 	// Gera um QrCode com uma imagem centralizada. A imagem inserida ocupará 30% do QrCode.
-	QrCode::format('png')->mergeString(Storage::get('diretório/da/imagem.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('diretório/da/imagem.png'), .3)->generate('Make me into a QrCode!');
 
 >Assim como o método `merge`, somente arquivos do tipo PNG são suportados. O mesmo aplica-se para correção de erros, altos níveis são recomendados.
 

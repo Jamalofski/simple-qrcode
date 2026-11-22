@@ -1,4 +1,6 @@
 
+> 이 번역은 버전 4 이전에 작성되어 내용이 오래되었습니다. 일부 섹션이 빠져 있거나 더 이상 정확하지 않습니다. 최신 내용은 [영어 문서](../en/README.md)를 참고하세요.
+
 - [소개(Introduction)](#docs-introduction)
 - [번역(Translations)](#docs-translations)
 - [설정(Configuration)](#docs-configuration)
@@ -186,13 +188,13 @@ Qr코드를 만들기 위한 문자 인코딩을 변경할 수 있습니다. 기
 	QrCode::merge($filename, $percentage, $absolute);
 	
 	//Generates a QrCode with an image centered in the middle.
-	QrCode::format('png')->merge('path-to-image.png')->generate();
+	QrCode::format('png')->merge('path-to-image.png')->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->merge('path-to-image.png', .3)->generate();
+	QrCode::format('png')->merge('path-to-image.png', .3)->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate('Make me into a QrCode!');
 
 >`merge` 메소드는 현재 PNG 포맷만 지원합니다.
 >`$absolute`가 `false`로 되어 있으면, 파일 경로는 상대 경로입니다. 절대 경로를 사용하고 싶으시면, 이 변수 값을 `true`로 변경해주세요.
@@ -208,10 +210,10 @@ Qr코드를 만들기 위한 문자 인코딩을 변경할 수 있습니다. 기
 	QrCode::mergeString(Storage::get('path/to/image.png'), $percentage);
 	
 	//Generates a QrCode with an image centered in the middle.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate('Make me into a QrCode!');
 
 >일반적인 `merge` 메소드 호출처럼, 현재 PNG 포맷만 지원합니다. 오류 복원율도 동일하게 높은 레벨의 오류 복원율을 권장합니다.
 

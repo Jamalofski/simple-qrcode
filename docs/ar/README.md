@@ -4,6 +4,8 @@
 
 <div dir="rtl">
 
+> هذه الترجمة سابقة للإصدار 4 وأصبحت قديمة: بعض الأقسام ناقصة وبعضها لم يعد صحيحًا. المرجع هو [التوثيق باللغة الإنجليزية](../en/README.md).
+
 <a id="docs-introduction"></a>
 ## المقدمة
 Simple QrCode هو غلاف سهل الاستخدام لإطار عمل Laravel الشهير استنادًا إلى العمل الرائع الذي يقدمه [Bacon/BaconQrCode](https://github.com/Bacon/BaconQrCode).  أنشأنا واجهة مألوفة و سهلة التثبيت لمستخدمي لارافل
@@ -322,13 +324,13 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 <div dir="ltr">
 
 	//Generates a QrCode with an image centered in the middle.
-	QrCode::format('png')->merge('path-to-image.png')->generate();
+	QrCode::format('png')->merge('path-to-image.png')->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->merge('path-to-image.png', .3)->generate();
+	QrCode::format('png')->merge('path-to-image.png', .3)->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate('Make me into a QrCode!');
 
 </div>
 
@@ -346,10 +348,10 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 <div dir="ltr">
 
 	//Generates a QrCode with an image centered in the middle.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate('Make me into a QrCode!');
 	
 	//Generates a QrCode with an image centered in the middle.  The inserted image takes up 30% of the QrCode.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate('Make me into a QrCode!');
 
 </div>
 >كما هو الحال مع استدعاء `merge` العادي ، يتم دعم PNG فقط في الوقت الحالي. الأمر نفسه ينطبق على تصحيح الخطأ ، ويوصى بالمستويات العالية.

@@ -302,20 +302,20 @@ Vous pouvez choisir l'un des encodages suivants :
 La méthode `merge` fusionne une image par-dessus un QrCode. On s'en sert généralement pour placer un logo dans un QrCode.
 
 	//Génère un QrCode avec une image au centre.
-	QrCode::format('png')->merge('path-to-image.png')->generate();
+	QrCode::format('png')->merge('path-to-image.png')->generate('Make me into a QrCode!');
 
 	//Génère un QrCode avec une image au centre. L'image occupe 30 % du QrCode.
-	QrCode::format('png')->merge('path-to-image.png', .3)->generate();
+	QrCode::format('png')->merge('path-to-image.png', .3)->generate('Make me into a QrCode!');
 
 	//Génère un QrCode avec une image au centre. L'image occupe 30 % du QrCode.
-	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate();
+	QrCode::format('png')->merge('http://www.google.com/someimage.png', .3, true)->generate('Make me into a QrCode!');
 
 > La méthode `merge` fonctionne avec les formats `png`, `webp` et `svg` ; l'`eps` l'ignore.
 > Si `$absolute` vaut `false`, le chemin est relatif au dossier de base de l'application, avec ou sans barre oblique au début : `public/logo.png` et `/public/logo.png` désignent le même fichier. Passez cette variable à `true` pour utiliser des chemins absolus.
 
 > En `svg`, l'image est intégrée au QrCode sous forme d'URI data. Ce peut être n'importe quelle image matricielle reconnue par PHP (png, jpeg, gif, webp...) ou une image svg. Les navigateurs affichent un logo svg ; quelques convertisseurs, comme les anciennes versions de librsvg, l'omettent : utilisez alors un logo png.
 
-	QrCode::errorCorrection('H')->merge('path-to-logo.svg', .25)->generate(); // QrCode svg avec un logo svg
+	QrCode::errorCorrection('H')->merge('path-to-logo.svg', .25)->generate('Make me into a QrCode!'); // QrCode svg avec un logo svg
 
 > Un logo masque une partie du QrCode : au niveau de correction par défaut, `L`, la plupart des codes ne se lisent plus derrière. Sauf si vous fixez un niveau avec `errorCorrection`, la méthode `merge` le monte à `H`, le plus élevé.
 
@@ -335,10 +335,10 @@ Par défaut, l'image recouvre les modules placés dessous. `clearUnderLogo` les 
 La méthode `mergeString` fait la même chose que `merge`, mais prend le contenu du fichier au lieu de son chemin. C'est pratique avec la façade `Storage`. Son interface ressemble beaucoup à celle de `merge`.
 
 	//Génère un QrCode avec une image au centre.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'))->generate('Make me into a QrCode!');
 
 	//Génère un QrCode avec une image au centre. L'image occupe 30 % du QrCode.
-	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate();
+	QrCode::format('png')->mergeString(Storage::get('path/to/image.png'), .3)->generate('Make me into a QrCode!');
 
 > Comme `merge`, elle fonctionne en `png`, en `webp` et en `svg`, et monte la correction d'erreur à `H` sauf si vous en fixez une.
 
