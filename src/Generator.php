@@ -34,6 +34,7 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use BadMethodCallException;
 use InvalidArgumentException;
+use LogicException;
 use RuntimeException;
 use SimpleSoftwareIO\QrCode\DataTypes\DataTypeInterface;
 use SimpleSoftwareIO\QrCode\DataTypes\EPC;
@@ -239,11 +240,12 @@ class Generator
     }
 
     /**
-     * Generates the QrCode.
+     * Generates the QrCode: returns it, or writes it to $filename and returns null. With Laravel,
+     * the QrCode comes as an HtmlString, so that Blade prints it as it is.
      *
      * @param string $text
      * @param string|null $filename
-     * @return void|\Illuminate\Support\HtmlString|string
+     * @return ($filename is null ? \Illuminate\Support\HtmlString|string : null)
      * @throws WriterException
      * @throws InvalidArgumentException
      * @throws RuntimeException when png is requested without imagick and with an option GD cannot render
@@ -285,7 +287,7 @@ class Generator
         if ($filename) {
             file_put_contents($filename, $qrCode);
 
-            return;
+            return null;
         }
 
         if (class_exists(\Illuminate\Support\HtmlString::class)) {
@@ -855,11 +857,12 @@ class Generator
         }
 
         if ($this->style === 'dot') {
-            return new DotsModule($this->styleSize);
+            // style() always sets the size; a subclass that sets the style alone gets its default.
+            return new DotsModule($this->styleSize ?? 0.5);
         }
 
         if ($this->style === 'round') {
-            return new RoundnessModule($this->styleSize);
+            return new RoundnessModule($this->styleSize ?? 0.5);
         }
 
         return SquareModule::instance();
@@ -933,7 +936,7 @@ class Generator
         }
 
         if (strlen($digits) <= 4) {
-            $digits = preg_replace('/(.)/', '$1$1', $digits);
+            $digits = implode('', array_map(fn (string $digit): string => $digit.$digit, str_split($digits)));
         }
 
         [$red, $green, $blue] = array_map(fn (string $pair): int => (int) hexdec($pair), str_split(substr($digits, 0, 6), 2));
@@ -1182,10 +1185,17 @@ class Generator
      *
      * @return float
      * @throws InvalidArgumentException when the merged content is not an image
+     * @throws LogicException when there is no merged image, which clearsUnderLogo() rules out
      */
     private function logoRatio(): float
     {
-        $info = @getimagesizefromstring($this->imageMerge);
+        $image = $this->imageMerge;
+
+        if ($image === null) {
+            throw new LogicException('There is no merged image to clear the modules under.');
+        }
+
+        $info = @getimagesizefromstring($image);
 
         if ($info && $info[0] && $info[1]) {
             return $info[0] / $info[1];
@@ -1195,7 +1205,7 @@ class Generator
             throw new InvalidArgumentException("The image merged with a {$this->format} QrCode must be a raster image PHP recognizes: png, jpeg, gif, webp...");
         }
 
-        return (new SvgImageMerge('', $this->imageMerge))->imageRatio();
+        return (new SvgImageMerge('', $image))->imageRatio();
     }
 
     /**

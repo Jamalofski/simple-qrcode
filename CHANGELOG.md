@@ -11,11 +11,12 @@ Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/sim
 - A call to a helper that does not exist names it, as in `Call to undefined method SimpleSoftwareIO\QrCode\Generator::notReal().`: the `BadMethodCallException` had no message.
 
 ### Documentation
+- The PHPDoc of `generate()` says that it returns null with a file and the QrCode without: the static analysis of your own code (PHPStan, Psalm, IDEs) no longer expects null from `generate('...')` or from the helpers.
 - The French documentation is up to date with the English one; it predated version 4.
 - The other translations, which predate version 4, open with a notice, in their language, that points to the English documentation.
 - The `merge()` and `mergeString()` examples call `generate()` with a text, in every language: without one, they failed with an `ArgumentCountError`.
 - The documentation no longer says that iPhones cannot read Wi-Fi QrCodes: their Camera app does since iOS 11.
-- The PHPDoc of the source is corrected and completed, for IDEs and static analysis: the nullable properties of the helpers, `GdImage` in place of `resource` in `Image`, the parameter, return and array types, and the type `SimpleSoftwareIO\QrCode\boolean`, which did not exist, on `merge()`. PHPStan now checks the source at level 7.
+- The PHPDoc of the source is corrected and completed, for IDEs and static analysis: the nullable properties of the helpers, `GdImage` in place of `resource` in `Image`, the parameter, return and array types, and the type `SimpleSoftwareIO\QrCode\boolean`, which did not exist, on `merge()`. PHPStan now checks the source at level 8.
 
 ## 4.5.2 (2026-11-20)
 

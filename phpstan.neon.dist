@@ -1,7 +1,8 @@
 # Static analysis of the package: composer analyse.
-# Level 7 has no error. Level 8 also asks to prove that values the code knows are set, such
-# as the size of a dot style or the merged image, are never null: annotations, not fixes.
+# Level 8 has no error. Level 9 asks to check the type of every field of the arrays passed to
+# the helpers (wiFi(), EPC(), calendar()...): that is input validation, which changes what they
+# accept, so it belongs with the validation of the settings in a minor release.
 parameters:
-    level: 7
+    level: 8
     paths:
         - src

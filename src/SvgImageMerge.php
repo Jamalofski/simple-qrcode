@@ -91,13 +91,13 @@ class SvgImageMerge
     protected function size(): array
     {
         $root = $this->rootTag($this->svg);
-        $size = $this->viewBoxSize($root) ?? [$this->attribute($root, 'width'), $this->attribute($root, 'height')];
+        [$width, $height] = $this->viewBoxSize($root) ?? [$this->attribute($root, 'width'), $this->attribute($root, 'height')];
 
-        if (! $size[0] || ! $size[1]) {
+        if (! $width || ! $height) {
             throw new InvalidArgumentException('The size of the svg QrCode cannot be read.');
         }
 
-        return $size;
+        return [$width, $height];
     }
 
     /**
