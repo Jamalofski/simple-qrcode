@@ -2,6 +2,15 @@
 
 Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/simple-qrcode`. In each version, behavior changes, which can need a change in your code, come first. Upstream links point to [SimpleSoftwareIO/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode).
 
+## 4.5.3 (unreleased)
+
+No code change.
+
+### Documentation
+- The French documentation is up to date with the English one; it predated version 4.
+- The documentation no longer says that iPhones cannot read Wi-Fi QrCodes: their Camera app does since iOS 11.
+- The PHPDoc of the source is corrected and completed, for IDEs and static analysis: the nullable properties of the helpers, `GdImage` in place of `resource` in `Image`, the parameter, return and array types, and the type `SimpleSoftwareIO\QrCodeoolean`, which did not exist, on `merge()`. PHPStan now checks the source at level 6.
+
 ## 4.5.2 (2026-11-20)
 
 No code change: PHP 8.6, released on 2026-11-19, is tested with Laravel 12 and 13, `png` with and without `imagick`. Laravel 11 does not support it, as with PHP 8.5. `composer.json` already allowed PHP 8.6, so 4.5.1 installs on it too.

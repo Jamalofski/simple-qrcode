@@ -115,7 +115,7 @@ Your code does not change, but a few behaviors do since 4.2. The [CHANGELOG](CHA
 
 [Deutsch](docs/de/README.md) | [Español](docs/es/README.md) | [Français](docs/fr/README.md) | [Italiano](docs/it/README.md) | [Português](docs/pt-br/README.md) | [Русский](docs/ru/README.md) | [日本語](docs/ja/README.md) | [한국어](docs/kr/README.md) | [हिंदी](docs/hi/README.md) | [简体中文](docs/zh-cn/README.md) | [العربية](docs/ar/README.md)
 
-The translations predate version 4 and some sections are out of date. The English documentation is the reference.
+The French documentation is up to date. The other translations predate version 4 and some sections are out of date: the English documentation is the reference.
 
 ## Contributing
 

@@ -1,5 +1,5 @@
 
-#### [Deutsch](../de/README.md) | [Español](../es/README.md) | [Français](../fr/README.md) | [Italiano](../it/README.md) | [Português](../pt-br/README.md) | [Русский](../ru/README.md) | [日本語](../ja/README.md) | [한국어](../kr/README.md) | [हिंदी](../hi/README.md) | [简体中文](../zh-cn/README.md)
+#### [Deutsch](../de/README.md) | [Español](../es/README.md) | [Français](../fr/README.md) | [Italiano](../it/README.md) | [Português](../pt-br/README.md) | [Русский](../ru/README.md) | [日本語](../ja/README.md) | [한국어](../kr/README.md) | [हिंदी](../hi/README.md) | [简体中文](../zh-cn/README.md) | [العربية](../ar/README.md)
 
 <a id="docs-introduction"></a>
 ## Introduction
@@ -485,7 +485,7 @@ This helpers makes scannable QrCodes that can connect a phone to a WiFi network.
 		'password' => 'myPassword'
 	]);
 	
->WiFi scanning is not currently supported on Apple Products.
+> The iPhone Camera app reads Wi-Fi QrCodes since iOS 11, as do most recent Android phones.
 
 <a id="docs-common-usage"></a>
 ## Common QrCode Usage
