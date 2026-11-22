@@ -9,7 +9,7 @@ No code change.
 ### Documentation
 - The French documentation is up to date with the English one; it predated version 4.
 - The documentation no longer says that iPhones cannot read Wi-Fi QrCodes: their Camera app does since iOS 11.
-- The PHPDoc of the source is corrected and completed, for IDEs and static analysis: the nullable properties of the helpers, `GdImage` in place of `resource` in `Image`, the parameter, return and array types, and the type `SimpleSoftwareIO\QrCodeoolean`, which did not exist, on `merge()`. PHPStan now checks the source at level 6.
+- The PHPDoc of the source is corrected and completed, for IDEs and static analysis: the nullable properties of the helpers, `GdImage` in place of `resource` in `Image`, the parameter, return and array types, and the type `SimpleSoftwareIO\QrCode\boolean`, which did not exist, on `merge()`. PHPStan now checks the source at level 6.
 
 ## 4.5.2 (2026-11-20)
 
