@@ -2,21 +2,19 @@
 
 Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/simple-qrcode`. In each version, behavior changes, which can need a change in your code, come first. Upstream links point to [SimpleSoftwareIO/simple-qrcode](https://github.com/SimpleSoftwareIO/simple-qrcode).
 
-## 4.5.3 (unreleased)
+## 4.5.3 (2026-11-22)
 
 ### Fixed
-- `BTC()` writes amounts in decimal notation, to the satoshi: amounts under 0.0001 BTC came out as `1.0E-5`, which wallets do not read under BIP 21, and some others as `0.30000000000000004`.
-- `wiFi()` takes `hidden` as a boolean: `true` and `false` came out as `H:1` and `H:`, which readers do not understand; they are written `H:true` and `H:false`. The strings `'true'` and `'false'` work as before.
-- `merge()` with a file that cannot be read, and a merged content that is not an image in `png` and `webp` (text, an empty string or an svg logo), throw an `InvalidArgumentException` that says so. They raised a PHP warning, then failed further on, with a `TypeError` outside Laravel.
-- A call to a helper that does not exist names it, as in `Call to undefined method SimpleSoftwareIO\QrCode\Generator::notReal().`: the `BadMethodCallException` had no message.
+- `BTC()` writes amounts in decimal, to the satoshi: under 0.0001 BTC they came out as `1.0E-5`, which wallets do not read, and some others as `0.30000000000000004`.
+- `wiFi()` writes a boolean `hidden` as `H:true` or `H:false`: it came out as `H:1` or `H:`, which readers do not understand. The strings `'true'` and `'false'` work as before.
+- `merge()` throws an `InvalidArgumentException` that names a file it cannot read, and, in `png` and `webp`, one that says so for content that is not an image (text, an empty string, an svg logo). Both gave a PHP warning, then failed further on.
+- A call to a helper that does not exist names it in the `BadMethodCallException`, which had no message.
 
 ### Documentation
-- The PHPDoc of `generate()` says that it returns null with a file and the QrCode without: the static analysis of your own code (PHPStan, Psalm, IDEs) no longer expects null from `generate('...')` or from the helpers.
-- The French documentation is up to date with the English one; it predated version 4.
-- The other translations, which predate version 4, open with a notice, in their language, that points to the English documentation.
-- The `merge()` and `mergeString()` examples call `generate()` with a text, in every language: without one, they failed with an `ArgumentCountError`.
-- The documentation no longer says that iPhones cannot read Wi-Fi QrCodes: their Camera app does since iOS 11.
-- The PHPDoc of the source is corrected and completed, for IDEs and static analysis: the nullable properties of the helpers, `GdImage` in place of `resource` in `Image`, the parameter, return and array types, and the type `SimpleSoftwareIO\QrCode\boolean`, which did not exist, on `merge()`. PHPStan now checks the source at level 8.
+- The `merge()` and `mergeString()` examples pass a text to `generate()`, in every language: copied as they were, they failed with an `ArgumentCountError`.
+- iPhones read Wi-Fi QR codes from the Camera app since iOS 11: the documentation said Apple devices could not.
+- The French documentation is up to date; the other translations, which predate version 4, open with a notice that points to the English one.
+- The PHPDoc is corrected and completed for IDEs and static analysis, which now checks the source at PHPStan level 8. `generate()` declares that it returns null only with a file, so the analysis of your own code no longer expects null from `generate('...')` or from the helpers.
 
 ## 4.5.2 (2026-11-20)
 
@@ -99,15 +97,15 @@ First release of the maintained fork, published as `jamalofski/simple-qrcode`. I
 - Requires PHP 8.2 or later and `bacon/bacon-qr-code` ^3, so it installs next to `laravel/fortify` and the official Laravel starter kits. Tested on PHP 8.2 to 8.5 and Laravel 11 to 13.
 - The `svg` output keeps the same shapes, but bacon 3 writes some path segments in a different order: this matters only if you compare raw svg strings.
 
+### Added
+- The `QrCode` facade and the generator declare their methods in PHPDoc, for IDE completion of chained calls.
+
 ### Fixed
 - `png` works without `imagick`: it is rendered with GD (bacon `GDLibRenderer`) when `imagick` is missing. Options GD cannot draw (dot and round styles, circle eyes, gradients) throw a clear `RuntimeException` instead of failing in `imagick`.
 - Merged logos keep a transparent background transparent (it turned opaque black).
 - `email()` and `BTC()` encode spaces as `%20` instead of `+` (RFC 6068, BIP 21): iOS Mail showed the `+` signs.
 - `generate()` declares `$filename` as nullable (PHP 8.4 deprecation).
 - With bacon 3, the round style renders in `eps` ([upstream #290](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/290)) and a gradient with a margin no longer cuts the eyes off in `png` ([upstream #211](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/211)). Both were confirmed while preparing 4.4.0.
-
-### Added
-- The `QrCode` facade and the generator declare their methods in PHPDoc, for IDE completion of chained calls.
 
 ### Documentation
 - Links to the original project website removed: the domain no longer belongs to the project.
@@ -165,66 +163,126 @@ Summary of the upstream release notes.
 - The size was lost when methods were chained ([upstream #132](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/132)).
 
 ## 2.0.0 (2017-11-26)
-* Fixed a bug where the merge image was not reset correctly ([upstream #93](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/93)).
-* Added Laravel auto discovery support ([upstream #82](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/82)). - Thanks [mazedlx](https://github.com/mazedlx)
+
+### Added
+- Laravel package auto-discovery ([upstream #82](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/82)).
+
+### Fixed
+- The merged image was not reset correctly ([upstream #93](https://github.com/SimpleSoftwareIO/simple-qrcode/issues/93)).
+
+### Thanks
+[mazedlx](https://github.com/mazedlx), for the auto-discovery.
 
 ## 1.5.1 (2016-12-06)
-* Fixed a bug where a QrCode used within a loop would not generate correctly.
+
+### Fixed
+- A QrCode generated within a loop came out wrong.
 
 ## 1.5.0 (2016-10-18)
-* Added French translation. -Thanks [francisek](https://github.com/francisek) and [Varpie!](https://github.com/Varpie)
-* Added BitCoin helper
+
+### Added
+- French translation.
+- Bitcoin helper.
+
+### Thanks
+[francisek](https://github.com/francisek) and [Varpie](https://github.com/Varpie), for the French translation.
 
 ## 1.4.6 (2016-10-12)
-* Added Portuguese translation. -Thanks [felipewmartins!](https://github.com/felipewmartins)
+
+### Added
+- Portuguese translation.
+
+### Thanks
+[felipewmartins](https://github.com/felipewmartins), for the translation.
 
 ## 1.4.5 (2016-10-11)
-* Added Spanish translation. -Thanks [gtarraga!](https://github.com/gtarraga)
-* Added Hindi translation. -Thanks [himanshu81494!](https://github.com/himanshu81494)
+
+### Added
+- Spanish and Hindi translations.
+
+### Thanks
+[gtarraga](https://github.com/gtarraga) and [himanshu81494](https://github.com/himanshu81494), for the Spanish and Hindi translations.
 
 ## 1.4.4 (2016-10-10)
-* Added Italian translation. -Thanks [simocosimo!](https://github.com/simocosimo)
+
+### Added
+- Italian translation.
+
+### Thanks
+[simocosimo](https://github.com/simocosimo), for the translation.
 
 ## 1.4.3 (2016-04-24)
-* Updated the docs to our new format.
-* Correct some typos in the Russian translation.
+
+### Documentation
+- The documentation moved to a new format.
+- Typos fixed in the Russian translation.
 
 ## 1.4.2 (2016-04-16)
-* Added Russian translation. -Thanks Victoria!
-* Added Chinese translation. -Thanks [blusewang!](https://github.com/blusewang)
+
+### Added
+- Russian and Chinese translations.
+
+### Thanks
+Victoria and [blusewang](https://github.com/blusewang), for the Russian and Chinese translations.
 
 ## 1.4.1 (2016-03-17)
-* Improved the quality of QrCodes with logos merge on them.  -Thanks [tuupke!](https://github.com/tuupke)
+
+### Changed
+- Better quality for QrCodes with a merged logo.
+
+### Thanks
+[tuupke](https://github.com/tuupke).
 
 ## 1.4.0 (2016-03-03)
-* Added the `mergeString` method.  This method adds the ability to pass in a binary string to create a QrCode with an image on it.  -Thanks [tuupke!](https://github.com/tuupke)
+
+### Added
+- `mergeString()` merges an image given as a string.
+
+### Thanks
+[tuupke](https://github.com/tuupke).
 
 ## 1.3.3 (2016-01-31)
-* Allow absolute paths to be used with the `merge` method.
+
+### Added
+- `merge()` takes absolute paths.
 
 ## 1.3.2 (2015-12-22)
-* Changed `bindShared` to `singleton` to support Laravel 5.2  -Thanks [lhdev!](https://github.com/lhdev)
+
+### Changed
+- `singleton` in place of `bindShared`, for Laravel 5.2.
+
+### Thanks
+[lhdev](https://github.com/lhdev).
 
 ## 1.3.1 (2015-09-18)
-* Fixed a bug where `merge` did not work as expected when used with `size.`
+
+### Fixed
+- `merge()` did not work as expected with `size()`.
 
 ## 1.3.0 (2015-06-25)
-* Added `merge` method.
-* Fixed a typo in the readme.
+
+### Added
+- `merge()`.
+
+### Documentation
+- A typo fixed in the readme.
 
 ## 1.2.0 (2015-02-28)
-* Added full support for Laravel 5
-* Added the following helpers.
-  * E-Mail
-  * Geo
-  * Phone Number
-  * SMS
-  * WiFi
+
+### Added
+- Full support for Laravel 5.
+- Helpers: e-mail, geo, phone number, SMS and Wi-Fi.
 
 ## 1.1.1 (2014-11-15)
-* Update dependencies.
-* Corrected some composer file issues.
-* Added some missing Laravel information to the QrCode Service Provider.
+
+### Changed
+- Dependencies updated.
+
+### Fixed
+- Issues in the composer file.
+- Laravel information missing from the service provider.
 
 ## 1.1.0 (2014-09-26)
-* Added the ability to change the character encoding.
+
+### Added
+- The character encoding can be changed.
