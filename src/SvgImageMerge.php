@@ -103,7 +103,7 @@ class SvgImageMerge
     /**
      * The media type of the image and its width to height ratio.
      *
-     * @return array
+     * @return array{0: string, 1: float}
      * @throws InvalidArgumentException
      */
     protected function describeImage(): array

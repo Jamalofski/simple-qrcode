@@ -2,17 +2,20 @@
 
 namespace SimpleSoftwareIO\QrCode\DataTypes;
 
+/**
+ * An sms URI: phones open a text message to the number, the message filled in.
+ */
 class SMS implements DataTypeInterface
 {
     /**
-     * The prefix of the QrCode.
+     * The scheme of an sms URI.
      *
      * @var string
      */
     protected $prefix = 'sms:';
 
     /**
-     * The separator between the variables.
+     * The separator between the phone number and the message.
      *
      * @var string
      */
@@ -26,16 +29,17 @@ class SMS implements DataTypeInterface
     protected $phoneNumber;
 
     /**
-     * The SMS message.
+     * The message, if any.
      *
-     * @var string
+     * @var string|null
      */
     protected $message;
 
     /**
-     * Generates the DataType Object and sets all of its properties.
+     * Sets the phone number and the message.
      *
-     * @param $arguments
+     * @param array<int, mixed> $arguments The phone number, then the message
+     * @return void
      */
     public function create(array $arguments)
     {
@@ -43,7 +47,7 @@ class SMS implements DataTypeInterface
     }
 
     /**
-     * Returns the correct QrCode format.
+     * Returns the sms URI.
      *
      * @return string
      */
@@ -53,9 +57,10 @@ class SMS implements DataTypeInterface
     }
 
     /**
-     * Sets the phone number and message for a sms message.
+     * Sets the phone number and the message that are given.
      *
-     * @param array $arguments
+     * @param array<int, mixed> $arguments
+     * @return void
      */
     protected function setProperties(array $arguments)
     {
@@ -68,7 +73,7 @@ class SMS implements DataTypeInterface
     }
 
     /**
-     * Builds a SMS string.
+     * Builds the sms URI.
      *
      * @return string
      */

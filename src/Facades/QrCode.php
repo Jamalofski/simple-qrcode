@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Facade;
 use SimpleSoftwareIO\QrCode\Generator;
 
 /**
+ * The QrCode facade of Laravel. Each call resolves a new Generator, so settings never leak
+ * from one QrCode to the next.
+ *
  * @method static \Illuminate\Support\HtmlString|string|null generate(string $text, ?string $filename = null)
  * @method static \SimpleSoftwareIO\QrCode\Generator merge(string $filepath, float $percentage = .2, bool $absolute = false)
  * @method static \SimpleSoftwareIO\QrCode\Generator mergeString(string $content, float $percentage = .2)
@@ -31,21 +34,21 @@ use SimpleSoftwareIO\QrCode\Generator;
  * @method static \SimpleSoftwareIO\QrCode\Generator margin(int $margin)
  * @method static \SimpleSoftwareIO\QrCode\Generator quality(int $quality)
  * @method static \SimpleSoftwareIO\QrCode\Generator compression(int $level)
- * @method static \Illuminate\Support\HtmlString|string|null BTC(string $address, float|null $amount = null, array $options = [])
- * @method static \Illuminate\Support\HtmlString|string|null calendar(array $event)
- * @method static \Illuminate\Support\HtmlString|string|null EPC(array $transfer)
- * @method static \Illuminate\Support\HtmlString|string|null email(?string $to = null, ?string $subject = null, ?string $body = null)
- * @method static \Illuminate\Support\HtmlString|string|null geo(float $latitude, float $longitude)
- * @method static \Illuminate\Support\HtmlString|string|null phoneNumber(string $phoneNumber)
- * @method static \Illuminate\Support\HtmlString|string|null SMS(string $phoneNumber, ?string $message = null)
- * @method static \Illuminate\Support\HtmlString|string|null wiFi(array $settings)
+ * @method static \Illuminate\Support\HtmlString|string BTC(string $address, float|null $amount = null, array<string, string> $options = [])
+ * @method static \Illuminate\Support\HtmlString|string calendar(array<string, mixed> $event)
+ * @method static \Illuminate\Support\HtmlString|string EPC(array<string, mixed> $transfer)
+ * @method static \Illuminate\Support\HtmlString|string email(?string $to = null, ?string $subject = null, ?string $body = null)
+ * @method static \Illuminate\Support\HtmlString|string geo(float $latitude, float $longitude)
+ * @method static \Illuminate\Support\HtmlString|string phoneNumber(string $phoneNumber)
+ * @method static \Illuminate\Support\HtmlString|string SMS(string $phoneNumber, ?string $message = null)
+ * @method static \Illuminate\Support\HtmlString|string wiFi(array<string, mixed> $settings)
  *
  * @see \SimpleSoftwareIO\QrCode\Generator
  */
 class QrCode extends Facade
 {
     /**
-     * Get the registered name of the component.
+     * Returns the class the facade resolves, after forgetting the previous instance.
      *
      * @return string
      */

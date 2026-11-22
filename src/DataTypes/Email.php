@@ -4,40 +4,45 @@ namespace SimpleSoftwareIO\QrCode\DataTypes;
 
 use BaconQrCode\Exception\InvalidArgumentException;
 
+/**
+ * A mailto URI (RFC 6068): phones open a new e-mail, the address, subject and body filled in.
+ */
 class Email implements DataTypeInterface
 {
     /**
-     * The prefix of the QrCode.
+     * The scheme of a mailto URI.
      *
      * @var string
      */
     protected $prefix = 'mailto:';
 
     /**
-     * The email address.
+     * The e-mail address, if any.
      *
-     * @var string
+     * @var string|null
      */
     protected $email;
 
     /**
-     * The subject of the email.
+     * The subject of the e-mail, if any.
      *
-     * @var string
+     * @var string|null
      */
     protected $subject;
 
     /**
-     * The body of an email.
+     * The body of the e-mail, if any.
      *
-     * @var string
+     * @var string|null
      */
     protected $body;
 
     /**
-     * Generates the DataType Object and sets all of its properties.
+     * Sets the address, the subject and the body.
      *
-     * @param $arguments
+     * @param array<int, mixed> $arguments The address, the subject, then the body, each one optional
+     * @return void
+     * @throws InvalidArgumentException when the address is not valid
      */
     public function create(array $arguments)
     {
@@ -45,7 +50,7 @@ class Email implements DataTypeInterface
     }
 
     /**
-     * Returns the correct QrCode format.
+     * Returns the mailto URI.
      *
      * @return string
      */
@@ -54,8 +59,8 @@ class Email implements DataTypeInterface
         return $this->buildEmailString();
     }
 
-    /*
-     * Builds the email string.
+    /**
+     * Builds the mailto URI. Spaces are encoded as %20, as RFC 6068 requires.
      *
      * @return string
      */
@@ -75,9 +80,11 @@ class Email implements DataTypeInterface
     }
 
     /**
-     * Sets the objects properties.
+     * Sets the address, the subject and the body that are given.
      *
-     * @param $arguments
+     * @param array<int, mixed> $arguments
+     * @return void
+     * @throws InvalidArgumentException when the address is not valid
      */
     protected function setProperties(array $arguments)
     {
@@ -93,9 +100,11 @@ class Email implements DataTypeInterface
     }
 
     /**
-     * Sets the email property.
+     * Sets the address once it is checked.
      *
-     * @param $email
+     * @param string $email
+     * @return void
+     * @throws InvalidArgumentException when the address is not valid
      */
     protected function setEmail($email)
     {
@@ -105,11 +114,11 @@ class Email implements DataTypeInterface
     }
 
     /**
-     * Ensures an email is valid.
+     * Checks an e-mail address.
      *
      * @param string $email
-     *
-     * @return bool
+     * @return bool true, as an invalid address throws
+     * @throws InvalidArgumentException when the address is not valid
      */
     protected function isValidEmail($email)
     {

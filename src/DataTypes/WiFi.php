@@ -2,54 +2,58 @@
 
 namespace SimpleSoftwareIO\QrCode\DataTypes;
 
+/**
+ * A Wi-Fi network: phones offer to join it.
+ */
 class WiFi implements DataTypeInterface
 {
     /**
-     * The prefix of the QrCode.
+     * The prefix of a Wi-Fi network.
      *
      * @var string
      */
     protected $prefix = 'WIFI:';
 
     /**
-     * The separator between the variables.
+     * The separator between the fields.
      *
      * @var string
      */
     protected $separator = ';';
 
     /**
-     * The encryption of the network.  WEP or WPA.
+     * The encryption of the network, such as WPA or WEP, if any.
      *
-     * @var string
+     * @var string|null
      */
     protected $encryption;
 
     /**
-     * The SSID of the WiFi network.
+     * The SSID, the name of the network.
      *
-     * @var string
+     * @var string|null
      */
     protected $ssid;
 
     /**
-     * The password of the network.
+     * The password of the network, if any.
      *
-     * @var string
+     * @var string|null
      */
     protected $password;
 
     /**
-     * Whether the network is a hidden SSID or not.
+     * Whether the network is hidden, if set.
      *
-     * @var bool
+     * @var bool|string|null
      */
     protected $hidden;
 
     /**
-     * Generates the DataType Object and sets all of its properties.
+     * Sets the network from its settings.
      *
-     * @param $arguments
+     * @param array<int, mixed> $arguments An array with encryption, ssid, password and hidden, each one optional
+     * @return void
      */
     public function create(array $arguments)
     {
@@ -57,7 +61,7 @@ class WiFi implements DataTypeInterface
     }
 
     /**
-     * Returns the correct QrCode format.
+     * Returns the Wi-Fi string.
      *
      * @return string
      */
@@ -67,7 +71,7 @@ class WiFi implements DataTypeInterface
     }
 
     /**
-     * Builds the WiFi string.
+     * Builds the Wi-Fi string, its fields escaped.
      *
      * @return string
      */
@@ -92,11 +96,10 @@ class WiFi implements DataTypeInterface
     }
 
     /**
-     * Escapes the characters that delimit the fields of a WiFi string:
+     * Escapes the characters that delimit the fields of a Wi-Fi string:
      * a backslash before \ ; , " and :, as phone readers expect.
      *
      * @param string $value
-     *
      * @return string
      */
     protected function escape($value)
@@ -105,9 +108,10 @@ class WiFi implements DataTypeInterface
     }
 
     /**
-     * Sets the WiFi properties.
+     * Sets the settings that are given.
      *
-     * @param $arguments
+     * @param array<int, mixed> $arguments
+     * @return void
      */
     protected function setProperties(array $arguments)
     {

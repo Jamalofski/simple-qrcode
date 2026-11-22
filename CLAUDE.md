@@ -26,7 +26,9 @@ in favour of this fork, or transferred.
   once merged.
 - A go on a change means commit, merge on `main` and push, in one step. Without a go: commit,
   then ask for the go in one question.
-- Tests run locally (`composer test`). The `Tests` workflow (PHP 8.2-8.6 x Laravel 11-13) is
+- Tests run locally (`composer test`), with the static analysis (`composer analyse`, PHPStan
+  level 6 on `src`, no error allowed). Keep the PHPDoc types right: PHPStan reads them, and the
+  public signatures cannot carry native types in 4.x. The `Tests` workflow (PHP 8.2-8.6 x Laravel 11-13) is
   `workflow_dispatch` only, run by hand before a release; nothing runs on push. To check a
   fix, run a subset:
   `gh workflow run tests.yml -R Jamalofski/simple-qrcode -f php='["8.4"]' -f laravel='["13"]'`.

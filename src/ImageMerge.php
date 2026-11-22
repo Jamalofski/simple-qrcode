@@ -4,80 +4,84 @@ namespace SimpleSoftwareIO\QrCode;
 
 use InvalidArgumentException;
 
+/**
+ * Merges an image, usually a logo, over the center of a png QrCode, with GD.
+ * SvgImageMerge does the same for svg.
+ */
 class ImageMerge
 {
     /**
-     * Holds the QrCode image.
+     * The QrCode.
      *
      * @var Image
      */
     protected $sourceImage;
 
     /**
-     * Holds the merging image.
+     * The image to merge over it.
      *
      * @var Image
      */
     protected $mergeImage;
 
     /**
-     * The height of the source image.
+     * The height of the QrCode, in pixels.
      *
      * @var int
      */
     protected $sourceImageHeight;
 
     /**
-     * The width of the source image.
+     * The width of the QrCode, in pixels.
      *
      * @var int
      */
     protected $sourceImageWidth;
 
     /**
-     * The height of the merge image.
+     * The height of the image to merge, in pixels.
      *
      * @var int
      */
     protected $mergeImageHeight;
 
     /**
-     * The width of the merge image.
+     * The width of the image to merge, in pixels.
      *
      * @var int
      */
     protected $mergeImageWidth;
 
     /**
-     * Holds the radio of the merging image.
+     * The width to height ratio of the image to merge, rounded to two decimals.
      *
      * @var float
      */
     protected $mergeRatio;
 
     /**
-     * The height of the merge image after it is merged.
+     * The height of the merged image on the QrCode, in pixels.
      *
      * @var int
      */
     protected $postMergeImageHeight;
 
     /**
-     * The width of the merge image after it is merged.
+     * The width of the merged image on the QrCode, in pixels.
      *
      * @var int
      */
     protected $postMergeImageWidth;
 
     /**
-     * The position that the merge image is placed on top of the source image.
+     * The top edge of the merged image on the QrCode, in pixels.
      *
      * @var int
      */
     protected $centerY;
 
     /**
-     * The position that the merge image is placed on top of the source image.
+     * The left edge of the merged image on the QrCode, in pixels.
      *
      * @var int
      */
@@ -86,8 +90,8 @@ class ImageMerge
     /**
      * Creates a new ImageMerge object.
      *
-     * @param $sourceImage Image The image that will be merged over.
-     * @param $mergeImage Image The image that will be used to merge with $sourceImage
+     * @param Image $sourceImage The QrCode
+     * @param Image $mergeImage The image to merge over it
      */
     public function __construct(Image $sourceImage, Image $mergeImage)
     {
@@ -96,12 +100,11 @@ class ImageMerge
     }
 
     /**
-     * Returns an QrCode that has been merge with another image.
-     * This is usually used with logos to imprint a logo into a QrCode.
+     * Merges the image over the center of the QrCode and returns the result as a png.
      *
-     * @param $percentage float The percentage of size relative to the entire QR of the merged image
-     *
+     * @param float $percentage The width of the merged image, as a share of the width of the QrCode
      * @return string
+     * @throws InvalidArgumentException when the percentage is over 1
      */
     public function merge($percentage)
     {
@@ -113,8 +116,9 @@ class ImageMerge
     /**
      * Merges the image like merge(), and returns the GD image instead of encoding it as png.
      *
-     * @param float $percentage The percentage of size relative to the entire QR of the merged image
+     * @param float $percentage The width of the merged image, as a share of the width of the QrCode
      * @return \GdImage
+     * @throws InvalidArgumentException when the percentage is over 1
      */
     public function mergeImage($percentage)
     {
@@ -159,7 +163,7 @@ class ImageMerge
     }
 
     /**
-     * Creates a PNG Image.
+     * Encodes the merged QrCode as a png.
      *
      * @return string
      */
@@ -172,11 +176,11 @@ class ImageMerge
     }
 
     /**
-     * Sets the objects properties.
+     * Reads the sizes of both images and computes where the merged image goes.
      *
-     * @param $percentage float The percentage that the merge image should take up.
-     *
+     * @param float $percentage The width of the merged image, as a share of the width of the QrCode
      * @return void
+     * @throws InvalidArgumentException when the percentage is over 1
      */
     protected function setProperties($percentage)
     {
@@ -195,7 +199,7 @@ class ImageMerge
     }
 
     /**
-     * Calculates the center of the source Image using the Merge image.
+     * Computes the top left corner of the merged image, so that it sits in the center.
      *
      * @return void
      */
@@ -206,10 +210,9 @@ class ImageMerge
     }
 
     /**
-     * Calculates the width of the merge image being placed on the source image.
+     * Computes the size of the merged image, keeping its ratio.
      *
-     * @param float $percentage
-     *
+     * @param float $percentage The width of the merged image, as a share of the width of the QrCode
      * @return void
      */
     protected function calculateOverlap($percentage)

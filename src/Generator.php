@@ -41,54 +41,53 @@ use SimpleSoftwareIO\QrCode\Eye\CircleEye;
 use SimpleSoftwareIO\QrCode\Eye\RoundedEye;
 
 /**
- * Helpers resolved by __call() from the classes of the DataTypes namespace.
+ * Generates QR codes in svg, eps, png and webp. The setters return the generator, so they
+ * chain, and generate() comes last. The helpers below are resolved by __call() from the
+ * classes of the DataTypes namespace.
  *
- * @method \Illuminate\Support\HtmlString|string|null BTC(string $address, float|null $amount = null, array $options = [])
- * @method \Illuminate\Support\HtmlString|string|null calendar(array $event)
- * @method \Illuminate\Support\HtmlString|string|null EPC(array $transfer)
- * @method \Illuminate\Support\HtmlString|string|null email(?string $to = null, ?string $subject = null, ?string $body = null)
- * @method \Illuminate\Support\HtmlString|string|null geo(float $latitude, float $longitude)
- * @method \Illuminate\Support\HtmlString|string|null phoneNumber(string $phoneNumber)
- * @method \Illuminate\Support\HtmlString|string|null SMS(string $phoneNumber, ?string $message = null)
- * @method \Illuminate\Support\HtmlString|string|null wiFi(array $settings)
+ * @method \Illuminate\Support\HtmlString|string BTC(string $address, float|null $amount = null, array<string, string> $options = [])
+ * @method \Illuminate\Support\HtmlString|string calendar(array<string, mixed> $event)
+ * @method \Illuminate\Support\HtmlString|string EPC(array<string, mixed> $transfer)
+ * @method \Illuminate\Support\HtmlString|string email(?string $to = null, ?string $subject = null, ?string $body = null)
+ * @method \Illuminate\Support\HtmlString|string geo(float $latitude, float $longitude)
+ * @method \Illuminate\Support\HtmlString|string phoneNumber(string $phoneNumber)
+ * @method \Illuminate\Support\HtmlString|string SMS(string $phoneNumber, ?string $message = null)
+ * @method \Illuminate\Support\HtmlString|string wiFi(array<string, mixed> $settings)
  */
 class Generator
 {
     /**
-     * Holds the selected formatter.
+     * The format of the QrCode: svg, eps, png or webp.
      *
      * @var string
      */
     protected $format = 'svg';
 
     /**
-     * Holds the size of the QrCode in pixels.
+     * The width and height of the QrCode, in pixels.
      *
      * @var int
      */
     protected $pixels = 100;
 
     /**
-     * Holds the margin size of the QrCode.
+     * The margin around the QrCode, in modules.
      *
      * @var int
      */
     protected $margin = 0;
 
     /**
-     * Holds the selected error correction.
-     * L: 7% loss.
-     * M: 15% loss.
-     * Q: 25% loss.
-     * H: 30% loss.
+     * The error correction level, or null for the default: L, or H with a merged logo.
+     * L restores 7% of the codewords, M 15%, Q 25% and H 30%.
      *
-     * @var string|null
+     * @var ErrorCorrectionLevel|null
      */
     protected $errorCorrection = null;
 
     /**
-     * Holds the selected encoder.  Possible values are
-     * ISO-8859-2, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6,
+     * The character encoding of the text, ISO-8859-1 by default. Possible values are
+     * ISO-8859-1, ISO-8859-2, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6,
      * ISO-8859-7, ISO-8859-8, ISO-8859-9, ISO-8859-10, ISO-8859-11,
      * ISO-8859-12, ISO-8859-13, ISO-8859-14, ISO-8859-15, ISO-8859-16,
      * SHIFT-JIS, WINDOWS-1250, WINDOWS-1251, WINDOWS-1252, WINDOWS-1256,
@@ -99,24 +98,23 @@ class Generator
     protected $encoding = Encoder::DEFAULT_BYTE_MODE_ECODING;
 
     /**
-     * The style of the blocks within the QrCode.
-     * Possible values are square, dot, and round.
+     * The style of the modules: square, dot or round.
      *
      * @var string
      */
     protected $style = 'square';
 
     /**
-     * The size of the selected style between 0 and 1.
-     * This only applies to dot and round.
+     * The size of the dots or the roundness, more than 0 and up to 1. The square style
+     * ignores it.
      *
      * @var float|null
      */
     protected $styleSize = null;
 
     /**
-     * The style to apply to the eye.
-     * Possible values are square, circle, rounded and pointy.
+     * The style of the eyes: square, circle, rounded or pointy. Null draws them with the
+     * module of the style.
      *
      * @var string|null
      */
@@ -165,28 +163,28 @@ class Generator
     protected $backgroundColor = null;
 
     /**
-     * An array that holds EyeFills of the color of the eyes.
+     * The colors of the eyes, by eye number: 0 top left, 1 top right, 2 bottom left.
      *
-     * @var array
+     * @var array<int, EyeFill>
      */
     protected $eyeColors = [];
 
     /**
-     * The gradient to apply to the QrCode.
+     * The gradient of the modules, if any.
      *
-     * @var Gradient
+     * @var Gradient|null
      */
     protected $gradient;
 
     /**
-     * Holds an image string that will be merged with the QrCode.
+     * The content of the image merged over the QrCode, if any.
      *
-     * @var null|string
+     * @var string|null
      */
     protected $imageMerge = null;
 
     /**
-     * The percentage that a merged image should take over the source image.
+     * The width of the merged image, as a share of the width of the QrCode.
      *
      * @var float
      */
@@ -215,10 +213,13 @@ class Generator
     private $customEye = null;
 
     /**
-     * Creates a new datatype object and then generates a QrCode.
+     * Resolves a helper, such as email() or wiFi(): creates the data type of the same name
+     * and generates its QrCode.
      *
-     * @param $method
-     * @param array $arguments
+     * @param string $method
+     * @param array<int, mixed> $arguments
+     * @return \Illuminate\Support\HtmlString|string
+     * @throws BadMethodCallException when no data type has that name
      */
     public function __call($method, array $arguments)
     {
@@ -268,7 +269,8 @@ class Generator
 
         try {
             $qrCode = $writer->writeString($text, $this->encoding, $errorCorrection);
-        } catch (WriterException $e) {
+        // bacon's Encoder throws it, but Writer::writeString() does not declare it.
+        } catch (WriterException $e) { // @phpstan-ignore catch.neverThrown
             throw $e->getMessage() === 'Data too big' ? $this->tooLong($text, $errorCorrection, $e) : $e;
         }
 
@@ -294,11 +296,11 @@ class Generator
     }
 
     /**
-     * Merges an image over the QrCode.
+     * Merges an image, usually a logo, over the center of the QrCode.
      *
-     * @param string $filepath
-     * @param float $percentage
-     * @param SimpleSoftwareIO\QrCode\boolean|bool $absolute
+     * @param string $filepath Relative to the base path of the Laravel application unless $absolute; used as it is outside Laravel
+     * @param float $percentage The width of the image, as a share of the width of the QrCode
+     * @param bool $absolute Whether $filepath is used as it is
      * @return Generator
      */
     public function merge(string $filepath, float $percentage = .2, bool $absolute = false): self
@@ -316,10 +318,10 @@ class Generator
     }
 
     /**
-     * Merges an image string with the center of the QrCode.
+     * Merges an image given as a string, usually a logo, over the center of the QrCode.
      *
-     * @param string  $content
-     * @param float $percentage
+     * @param string $content The content of the image
+     * @param float $percentage The width of the image, as a share of the width of the QrCode
      * @return Generator
      */
     public function mergeString(string $content, float $percentage = .2): self
@@ -331,7 +333,7 @@ class Generator
     }
 
     /**
-     * Sets the size of the QrCode.
+     * Sets the width and height of the QrCode.
      *
      * @param int $pixels
      * @return Generator
@@ -346,7 +348,7 @@ class Generator
     /**
      * Sets the format of the QrCode.
      *
-     * @param string $format
+     * @param string $format svg, eps, png or webp
      * @return Generator
      * @throws InvalidArgumentException
      */
@@ -362,12 +364,12 @@ class Generator
     }
 
     /**
-     * Sets the foreground color of the QrCode.
+     * Sets the color of the modules.
      *
-     * @param int $red
-     * @param int $green
-     * @param int $blue
-     * @param null|int $alpha
+     * @param int $red from 0 to 255
+     * @param int $green from 0 to 255
+     * @param int $blue from 0 to 255
+     * @param int|null $alpha from 0, transparent, to 100, opaque
      * @return Generator
      */
     public function color(int $red, int $green, int $blue, ?int $alpha = null): self
@@ -380,10 +382,10 @@ class Generator
     /**
      * Sets the background color of the QrCode.
      *
-     * @param int $red
-     * @param int $green
-     * @param int $blue
-     * @param null|int $alpha
+     * @param int $red from 0 to 255
+     * @param int $green from 0 to 255
+     * @param int $blue from 0 to 255
+     * @param int|null $alpha from 0, transparent, to 100, opaque
      * @return Generator
      */
     public function backgroundColor(int $red, int $green, int $blue, ?int $alpha = null): self
@@ -394,7 +396,7 @@ class Generator
     }
 
     /**
-     * Sets the foreground color of the QrCode from a hex color.
+     * Sets the color of the modules from a hex color.
      *
      * @param string $hex #rgb, #rgba, #rrggbb or #rrggbbaa, with or without the #
      * @return Generator
@@ -422,9 +424,10 @@ class Generator
     }
 
     /**
-     * Sets the eye color for the provided eye index.
+     * Sets the colors of an eye. Despite their names, the first color goes to the ring and
+     * the second to the center, as bacon's EyeFill receives them.
      *
-     * @param int $eyeNumber
+     * @param int $eyeNumber 0 top left, 1 top right, 2 bottom left
      * @param int $innerRed
      * @param int $innerGreen
      * @param int $innerBlue
@@ -449,10 +452,9 @@ class Generator
     }
 
     /**
-     * Sets the eye color for the provided eye index from hex colors,
-     * in the same order as eyeColor().
+     * Sets the colors of an eye from hex colors, in the same order as eyeColor().
      *
-     * @param int $eyeNumber
+     * @param int $eyeNumber 0 top left, 1 top right, 2 bottom left
      * @param string $innerHex
      * @param string $outterHex
      * @return Generator
@@ -469,6 +471,18 @@ class Generator
         return $this;
     }
 
+    /**
+     * Sets a gradient on the modules.
+     *
+     * @param int $startRed from 0 to 255
+     * @param int $startGreen from 0 to 255
+     * @param int $startBlue from 0 to 255
+     * @param int $endRed from 0 to 255
+     * @param int $endGreen from 0 to 255
+     * @param int $endBlue from 0 to 255
+     * @param string $type vertical, horizontal, diagonal, inverse_diagonal or radial
+     * @return Generator
+     */
     public function gradient($startRed, $startGreen, $startBlue, $endRed, $endGreen, $endBlue, string $type): self
     {
         $type = strtoupper($type);
@@ -628,10 +642,10 @@ class Generator
     }
 
     /**
-     * Sets the style of the blocks for the QrCode.
+     * Sets the style of the modules.
      *
-     * @param string $style
-     * @param float $size
+     * @param string $style square, dot or round
+     * @param float $size The size of the dots or the roundness, more than 0 and up to 1
      * @return Generator
      * @throws InvalidArgumentException
      */
@@ -654,9 +668,8 @@ class Generator
     }
 
     /**
-     * Sets the encoding for the QrCode.
-     * Possible values are
-     * ISO-8859-2, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6,
+     * Sets the character encoding of the text. Possible values are
+     * ISO-8859-1, ISO-8859-2, ISO-8859-3, ISO-8859-4, ISO-8859-5, ISO-8859-6,
      * ISO-8859-7, ISO-8859-8, ISO-8859-9, ISO-8859-10, ISO-8859-11,
      * ISO-8859-12, ISO-8859-13, ISO-8859-14, ISO-8859-15, ISO-8859-16,
      * SHIFT-JIS, WINDOWS-1250, WINDOWS-1251, WINDOWS-1252, WINDOWS-1256,
@@ -673,13 +686,10 @@ class Generator
     }
 
     /**
-     * Sets the error correction for the QrCode.
-     * L: 7% loss.
-     * M: 15% loss.
-     * Q: 25% loss.
-     * H: 30% loss.
+     * Sets the error correction level. L restores 7% of the codewords, M 15%, Q 25% and H 30%:
+     * the higher the level, the larger the QrCode for the same text.
      *
-     * @param string $errorCorrection
+     * @param string $errorCorrection L, M, Q or H
      * @return Generator
      */
     public function errorCorrection(string $errorCorrection): self
@@ -691,9 +701,9 @@ class Generator
     }
 
     /**
-     * Sets the margin of the QrCode.
+     * Sets the margin around the QrCode.
      *
-     * @param int $margin
+     * @param int $margin in modules
      * @return Generator
      */
     public function margin(int $margin): self
@@ -704,7 +714,7 @@ class Generator
     }
 
     /**
-     * Fetches the Writer.
+     * Creates the bacon writer of a renderer.
      *
      * @param ImageRenderer $renderer
      * @return Writer
@@ -715,7 +725,7 @@ class Generator
     }
 
     /**
-     * Fetches the Image Renderer.
+     * Creates the bacon renderer for svg, eps, and png or webp with imagick.
      *
      * @return ImageRenderer
      */
@@ -730,7 +740,7 @@ class Generator
     }
 
     /**
-     * Returns the Renderer Style.
+     * Creates the bacon renderer style: size, margin, module, eye and colors.
      *
      * @return RendererStyle
      */
@@ -805,7 +815,7 @@ class Generator
     }
 
     /**
-     * Fetches the formatter.
+     * Creates the bacon back end of the format: imagick for png and webp, eps or svg.
      *
      * @return ImageBackEndInterface
      */
@@ -826,7 +836,7 @@ class Generator
     }
 
     /**
-     * Fetches the module.
+     * Returns the module of the style, or the one set with customStyle().
      *
      * @return ModuleInterface
      */
@@ -848,7 +858,7 @@ class Generator
     }
 
     /**
-     * Fetches the eye style.
+     * Returns the eye of the eye styles, or the one set with customEye().
      *
      * @return EyeInterface
      */
@@ -1177,7 +1187,7 @@ class Generator
     }
 
     /**
-     * Fetches the color fill.
+     * Creates the bacon fill: background, modules or gradient, and the colors of the eyes.
      *
      * @return Fill
      */
@@ -1197,11 +1207,12 @@ class Generator
     }
 
     /**
-     * Creates a RGB or Alpha channel color.
-     * @param int $red
-     * @param int $green
-     * @param int $blue
-     * @param null|int $alpha
+     * Creates a bacon color, with an alpha channel when one is given.
+     *
+     * @param int $red from 0 to 255
+     * @param int $green from 0 to 255
+     * @param int $blue from 0 to 255
+     * @param int|null $alpha from 0, transparent, to 100, opaque
      * @return ColorInterface
      */
     public function createColor(int $red, int $green, int $blue, ?int $alpha = null): ColorInterface
@@ -1214,10 +1225,11 @@ class Generator
     }
 
     /**
-     * Creates a new DataType class dynamically.
+     * Creates the data type of a helper, from its name.
      *
      * @param string $method
      * @return DataTypeInterface
+     * @throws BadMethodCallException when no data type has that name
      */
     protected function createClass(string $method): DataTypeInterface
     {
@@ -1231,9 +1243,9 @@ class Generator
     }
 
     /**
-     * Formats the method name correctly.
+     * The class of the data type of a helper: email() gives DataTypes\Email.
      *
-     * @param $method
+     * @param string $method
      * @return string
      */
     protected function formatClass(string $method): string

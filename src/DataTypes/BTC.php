@@ -2,54 +2,58 @@
 
 namespace SimpleSoftwareIO\QrCode\DataTypes;
 
+/**
+ * A bitcoin URI (BIP 21): wallets open a payment to the address, the amount filled in.
+ */
 class BTC implements DataTypeInterface
 {
     /**
-     * The prefix of the QrCode.
+     * The scheme of a bitcoin URI.
      *
      * @var string
      */
     protected $prefix = 'bitcoin:';
 
     /**
-     * The BitCoin address.
+     * The bitcoin address.
      *
-     * @var string
+     * @var string|null
      */
     protected $address;
 
     /**
-     * The amount to send.
+     * The amount to send, in BTC.
      *
-     * @var int
+     * @var float|string|null
      */
     protected $amount;
 
     /**
-     * The BitCoin transaction label.
+     * The label of the payment, if any.
      *
-     * @var string
+     * @var string|null
      */
     protected $label;
 
     /**
-     * The BitCoin message to send.
+     * The message of the payment, if any.
      *
-     * @var string
+     * @var string|null
      */
     protected $message;
 
     /**
-     * The BitCoin return URL.
+     * The return URL, if any.
      *
-     * @var string
+     * @var string|null
      */
     protected $returnAddress;
 
     /**
-     * Generates the DataType Object and sets all of its properties.
+     * Sets the address, the amount and the options.
      *
-     * @param $arguments
+     * @param array<int, mixed> $arguments The address, the amount, then the options: label, message and returnAddress
+     * @return void
      */
     public function create(array $arguments)
     {
@@ -57,7 +61,7 @@ class BTC implements DataTypeInterface
     }
 
     /**
-     * Returns the correct QrCode format.
+     * Returns the bitcoin URI.
      *
      * @return string
      */
@@ -67,9 +71,10 @@ class BTC implements DataTypeInterface
     }
 
     /**
-     * Sets the BitCoin arguments.
+     * Sets the address, the amount and the options that are given.
      *
-     * @param array $arguments
+     * @param array<int, mixed> $arguments
+     * @return void
      */
     protected function setProperties(array $arguments)
     {
@@ -87,9 +92,10 @@ class BTC implements DataTypeInterface
     }
 
     /**
-     * Sets the optional BitCoin options.
+     * Sets the optional label, message and return URL.
      *
-     * @param array $options
+     * @param array<string, string> $options
+     * @return void
      */
     protected function setOptions(array $options)
     {
@@ -107,7 +113,7 @@ class BTC implements DataTypeInterface
     }
 
     /**
-     * Builds a BitCoin string.
+     * Builds the bitcoin URI. Spaces are encoded as %20, as BIP 21 requires.
      *
      * @return string
      */

@@ -38,9 +38,10 @@ class Calendar implements DataTypeInterface
     protected $lines = [];
 
     /**
-     * Generates the DataType Object and sets all of its properties.
+     * Sets the event from the array passed to calendar().
      *
-     * @param array $arguments
+     * @param array<int, mixed> $arguments
+     * @return void
      * @throws InvalidArgumentException
      */
     public function create(array $arguments)
@@ -49,7 +50,7 @@ class Calendar implements DataTypeInterface
     }
 
     /**
-     * Returns the correct QrCode format.
+     * Returns the event, between BEGIN:VEVENT and END:VEVENT.
      *
      * @return string
      */
@@ -62,6 +63,7 @@ class Calendar implements DataTypeInterface
      * Checks and sets the fields of the event.
      *
      * @param mixed $event
+     * @return void
      * @throws InvalidArgumentException
      */
     protected function setProperties($event)

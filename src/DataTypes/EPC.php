@@ -13,7 +13,7 @@ class EPC implements DataTypeInterface
     /**
      * The character sets of the EPC guidelines, by QR code encoding.
      *
-     * @var array
+     * @var array<string, int>
      */
     protected const CHARACTER_SETS = [
         'UTF-8' => 1,
@@ -44,14 +44,15 @@ class EPC implements DataTypeInterface
     /**
      * The fields of the transfer.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $fields = [];
 
     /**
-     * Generates the DataType Object and sets all of its properties.
+     * Sets the transfer from the array passed to EPC().
      *
-     * @param array $arguments
+     * @param array<int, mixed> $arguments
+     * @return void
      * @throws InvalidArgumentException
      */
     public function create(array $arguments)
@@ -123,6 +124,7 @@ class EPC implements DataTypeInterface
      * Checks and sets the fields of the transfer.
      *
      * @param mixed $arguments
+     * @return void
      * @throws InvalidArgumentException
      */
     protected function setProperties($arguments)
@@ -205,7 +207,7 @@ class EPC implements DataTypeInterface
      * A compact field (IBAN, BIC, reference) loses every space first, non-breaking
      * ones included, as when it is pasted from a PDF in groups of four.
      *
-     * @param array $arguments
+     * @param array<string, mixed> $arguments
      * @param string $key
      * @param int $maxLength
      * @param bool $compact

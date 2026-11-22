@@ -2,10 +2,13 @@
 
 namespace SimpleSoftwareIO\QrCode\DataTypes;
 
+/**
+ * A tel URI: phones offer to call the number.
+ */
 class PhoneNumber implements DataTypeInterface
 {
     /**
-     * The prefix of the QrCode.
+     * The scheme of a tel URI.
      *
      * @var string
      */
@@ -14,14 +17,15 @@ class PhoneNumber implements DataTypeInterface
     /**
      * The phone number.
      *
-     * @var
+     * @var string
      */
     protected $phoneNumber;
 
     /**
-     * Generates the DataType Object and sets all of its properties.
+     * Sets the phone number.
      *
-     * @param $arguments
+     * @param array<int, mixed> $arguments The phone number
+     * @return void
      */
     public function create(array $arguments)
     {
@@ -29,7 +33,7 @@ class PhoneNumber implements DataTypeInterface
     }
 
     /**
-     * Returns the correct QrCode format.
+     * Returns the tel URI.
      *
      * @return string
      */

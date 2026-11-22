@@ -2,37 +2,40 @@
 
 namespace SimpleSoftwareIO\QrCode;
 
+/**
+ * A GD image read from a string, for ImageMerge.
+ */
 class Image
 {
     /**
-     * Holds the image resource.
+     * Holds the GD image, or false when the string was not an image.
      *
-     * @var resource
+     * @var \GdImage|false
      */
     protected $image;
 
     /**
      * Creates a new Image object.
      *
-     * @param $image string An image string
+     * @param string $image An image string
      */
     public function __construct($image)
     {
         $this->image = imagecreatefromstring($image);
     }
 
-    /*
-     * Returns the width of an image
+    /**
+     * Returns the width of an image.
      *
      * @return int
-    */
+     */
     public function getWidth()
     {
         return imagesx($this->image);
     }
 
-    /*
-     * Returns the height of an image
+    /**
+     * Returns the height of an image.
      *
      * @return int
      */
@@ -42,9 +45,9 @@ class Image
     }
 
     /**
-     * Returns the image string.
+     * Returns the GD image.
      *
-     * @return string
+     * @return \GdImage|false
      */
     public function getImageResource()
     {
@@ -52,9 +55,10 @@ class Image
     }
 
     /**
-     * Sets the image string.
+     * Sets the GD image.
      *
-     * @param resource $image
+     * @param \GdImage $image
+     * @return void
      */
     public function setImageResource($image)
     {

@@ -54,3 +54,8 @@ jobs:
 
       - name: Run test suite
         run: composer test
+
+      # One job is enough: the analysis does not depend on the PHP or Laravel version.
+      - name: Static analysis
+        if: matrix.php == '8.4' && matrix.laravel == '13'
+        run: composer analyse
