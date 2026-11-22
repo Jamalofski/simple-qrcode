@@ -129,7 +129,8 @@ class ImageMerge
         // so a transparent background stays transparent once the logo is merged.
         imagealphablending($img, false);
         imagesavealpha($img, true);
-        $transparent = imagecolorallocatealpha($img, 0, 0, 0, 127);
+        // A true color image never runs out of colors: the allocation cannot fail.
+        $transparent = (int) imagecolorallocatealpha($img, 0, 0, 0, 127);
         imagefill($img, 0, 0, $transparent);
         imagealphablending($img, true);
 
@@ -172,7 +173,7 @@ class ImageMerge
         ob_start();
         imagepng($this->sourceImage->getImageResource());
 
-        return ob_get_clean();
+        return (string) ob_get_clean();
     }
 
     /**

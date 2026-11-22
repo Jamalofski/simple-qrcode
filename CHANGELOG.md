@@ -4,12 +4,14 @@ Changes of `jamalofski/simple-qrcode` and, up to 4.2.0, of `simplesoftwareio/sim
 
 ## 4.5.3 (unreleased)
 
-No code change.
+### Fixed
+- `merge()` with a file that cannot be read, and a merged content that is not an image in `png` and `webp` (text, an empty string or an svg logo), throw an `InvalidArgumentException` that says so. They raised a PHP warning, then failed further on, with a `TypeError` outside Laravel.
+- A call to a helper that does not exist names it, as in `Call to undefined method SimpleSoftwareIO\QrCode\Generator::notReal().`: the `BadMethodCallException` had no message.
 
 ### Documentation
 - The French documentation is up to date with the English one; it predated version 4.
 - The documentation no longer says that iPhones cannot read Wi-Fi QrCodes: their Camera app does since iOS 11.
-- The PHPDoc of the source is corrected and completed, for IDEs and static analysis: the nullable properties of the helpers, `GdImage` in place of `resource` in `Image`, the parameter, return and array types, and the type `SimpleSoftwareIO\QrCode\boolean`, which did not exist, on `merge()`. PHPStan now checks the source at level 6.
+- The PHPDoc of the source is corrected and completed, for IDEs and static analysis: the nullable properties of the helpers, `GdImage` in place of `resource` in `Image`, the parameter, return and array types, and the type `SimpleSoftwareIO\QrCode\boolean`, which did not exist, on `merge()`. PHPStan now checks the source at level 7.
 
 ## 4.5.2 (2026-11-20)
 

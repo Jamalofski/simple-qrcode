@@ -433,6 +433,33 @@ class PngTest extends TestCase
         }
     }
 
+    public static function notImages(): array
+    {
+        $cases = [];
+
+        foreach (self::renderers() as $renderer => [$class]) {
+            foreach (['png', 'webp'] as $format) {
+                $cases["{$renderer}, {$format}, text"] = [$class, $format, 'this is not an image'];
+                $cases["{$renderer}, {$format}, empty"] = [$class, $format, ''];
+                $cases["{$renderer}, {$format}, svg logo"] = [$class, $format, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"/>'];
+            }
+        }
+
+        return $cases;
+    }
+
+    #[DataProvider('notImages')]
+    public function test_content_that_is_not_an_image_says_so(string $class, string $format, string $content)
+    {
+        // It gave a PHP warning, then a TypeError on false.
+        $generator = $this->generator($class)->format($format)->mergeString($content);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The image to merge is not one GD can read');
+
+        $generator->generate('not an image');
+    }
+
     public function test_webp_without_imagick_has_the_limits_of_gd()
     {
         $this->expectException(RuntimeException::class);

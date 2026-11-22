@@ -302,6 +302,7 @@ class Generator
      * @param float $percentage The width of the image, as a share of the width of the QrCode
      * @param bool $absolute Whether $filepath is used as it is
      * @return Generator
+     * @throws InvalidArgumentException when the file cannot be read
      */
     public function merge(string $filepath, float $percentage = .2, bool $absolute = false): self
     {
@@ -311,7 +312,14 @@ class Generator
             $filepath = base_path($filepath);
         }
 
-        $this->imageMerge = file_get_contents($filepath);
+        // A file that cannot be read gave a PHP warning, then failed later on false.
+        $content = @file_get_contents($filepath);
+
+        if ($content === false) {
+            throw new InvalidArgumentException("The image to merge cannot be read: {$filepath}.");
+        }
+
+        $this->imageMerge = $content;
         $this->imagePercentage = $percentage;
 
         return $this;
@@ -928,7 +936,7 @@ class Generator
             $digits = preg_replace('/(.)/', '$1$1', $digits);
         }
 
-        [$red, $green, $blue] = array_map('hexdec', str_split(substr($digits, 0, 6), 2));
+        [$red, $green, $blue] = array_map(fn (string $pair): int => (int) hexdec($pair), str_split(substr($digits, 0, 6), 2));
         // The alpha byte (00 to ff) becomes the 0 to 100 alpha of the other color methods.
         $alpha = strlen($digits) === 8 ? (int) round(hexdec(substr($digits, 6, 2)) * 100 / 255) : null;
 
@@ -975,13 +983,17 @@ class Generator
             ? imagecreatefromstring($png)
             : (new ImageMerge(new Image($png), new Image($this->imageMerge)))->mergeImage($this->imagePercentage);
 
+        if ($image === false) {
+            throw new RuntimeException('GD cannot read the png of the renderer.');
+        }
+
         ob_start();
 
         if ($this->format === 'png') {
             // Without compression(), the level ImageMerge always used.
             imagepng($image, null, $this->compression ?? -1);
 
-            return ob_get_clean();
+            return (string) ob_get_clean();
         }
 
         if (! imageistruecolor($image)) {
@@ -992,7 +1004,7 @@ class Generator
         imagesavealpha($image, true);
         imagewebp($image, null, $this->quality ?? (defined('IMG_WEBP_LOSSLESS') ? IMG_WEBP_LOSSLESS : 101));
 
-        return ob_get_clean();
+        return (string) ob_get_clean();
     }
 
     /**
@@ -1235,8 +1247,8 @@ class Generator
     {
         $class = $this->formatClass($method);
 
-        if (! class_exists($class)) {
-            throw new BadMethodCallException();
+        if (! class_exists($class) || ! is_subclass_of($class, DataTypeInterface::class)) {
+            throw new BadMethodCallException('Call to undefined method '.static::class."::{$method}().");
         }
 
         return new $class();

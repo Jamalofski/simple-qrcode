@@ -150,7 +150,7 @@ class SvgImageMerge
             return null;
         }
 
-        $values = preg_split('/[\s,]+/', trim($match[1]));
+        $values = preg_split('/[\s,]+/', trim($match[1])) ?: [];
 
         if (count($values) !== 4 || (float) $values[2] <= 0 || (float) $values[3] <= 0) {
             return null;

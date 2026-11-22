@@ -316,7 +316,33 @@ class GeneratorTest extends TestCase
     public function test_it_throws_an_exception_if_datatype_is_not_found()
     {
         $this->expectException(BadMethodCallException::class);
+        $this->expectExceptionMessage('Call to undefined method SimpleSoftwareIO\QrCode\Generator::notReal().');
         (new Generator)->notReal('fooBar');
+    }
+
+    public function test_a_class_that_is_not_a_data_type_is_not_a_helper()
+    {
+        $generator = new class extends Generator
+        {
+            protected function formatClass(string $method): string
+            {
+                return \ArrayObject::class;
+            }
+        };
+
+        $this->expectException(BadMethodCallException::class);
+        $generator->arrayObject();
+    }
+
+    public function test_merge_says_when_the_file_cannot_be_read()
+    {
+        $missing = __DIR__.'/Images/no-such-logo.png';
+
+        // No PHP warning any more: an exception that names the file.
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("The image to merge cannot be read: {$missing}.");
+
+        (new Generator)->merge($missing, .2, true);
     }
 
     public function test_generator_can_return_illuminate_support_htmlstring()

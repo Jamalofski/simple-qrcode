@@ -1,8 +1,7 @@
 # Static analysis of the package: composer analyse.
-# Level 6 has no error. Level 7 also reports the false returns of GD and file functions that
-# the code does not check, such as a merged file that cannot be read or is not an image:
-# fixing them changes behavior, so it belongs in a release.
+# Level 7 has no error. Level 8 also asks to prove that values the code knows are set, such
+# as the size of a dot style or the merged image, are never null: annotations, not fixes.
 parameters:
-    level: 6
+    level: 7
     paths:
         - src
